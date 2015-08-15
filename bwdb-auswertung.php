@@ -62,95 +62,87 @@ function bwdbShowAvg( $attr ) {
 	echo '</ul>';
 	?>
 
-	<table>
-		<tr>
-			<td colspan="2"><a
-					href="<?php echo add_query_arg( array( 'sex' => '', 'ssn_id' => $attr['ssn_id'] ), $base ); ?>">Schnittliste</a>
-			</td>
-			<td colspan="6">Tabellen</td>
-		</tr>
-		<tr>
-			<td>
+	<div>
+		<ul class="saison">
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'   => 'schnitt',
 					'sex'    => '0',
 					'ssn_id' => $attr['ssn_id']
 				), $base ); ?>">Damen</a>
-			</td>
-			<td>
+			</li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'   => 'schnitt',
 					'sex'    => '1',
 					'ssn_id' => $attr['ssn_id']
 				), $base ); ?>">Herren</a>
-			</td>
-			<td>
+			</li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'   => 'allevent',
 					'sex'    => '0',
 					'min'    => '21',
 					'ssn_id' => $attr['ssn_id']
 				), $base ); ?>">All-Event Damen</a>
-			</td>
-			<td>
+			</li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'   => 'allevent',
 					'sex'    => '1',
 					'min'    => '21',
 					'ssn_id' => $attr['ssn_id']
 				), $base ); ?>">All-Event Herren</a>
-			</td>
-			<td>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<ul class="saison">
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '1,2,3',
 					'ssn_id'  => $attr['ssn_id']
 				), $base ); ?>">4er
-					Gesamt</a></td>
-			<td>
+					Gesamt</a></li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '1',
 					'ssn_id'  => $attr['ssn_id']
 				), $base ); ?>">4er
-					Gruppe A</a></td>
-			<td>
+					Gruppe A</a></li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '2',
 					'ssn_id'  => $attr['ssn_id']
 				), $base ); ?>">4er
-					Gruppe B</a></td>
-			<td>
+					Gruppe B</a></li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '3',
 					'ssn_id'  => $attr['ssn_id']
 				), $base ); ?>">4er
-					Gruppe C</a></td>
-			<td>
+					Gruppe C</a></li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '4',
 					'ssn_id'  => $attr['ssn_id']
 				), $base ); ?>">Damen-Doppel</a>
-			</td>
-			<td>
+			</li>
+			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '5',
 					'ssn_id'  => $attr['ssn_id']
 				), $base ); ?>">Mix-Doppel</a>
-			</td>
-		</tr>
-	</table>
-
-	<div>
-		Liebe Bowlinggemeinde! Für Rückmeldungen, konstruktive Kritik und Vorschläge bin ich jederzeit dankbar.<br/>
-		Danke! <a href="mailto:tanja@swietli.at">» Tanja</a>
+			</li>
+		</ul>
 	</div>
 	<hr/>
-
 	<?php
 
 	$show = $attr['show'];
