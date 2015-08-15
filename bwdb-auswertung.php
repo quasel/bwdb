@@ -86,6 +86,22 @@ function bwdbShowAvg( $attr ) {
 			</td>
 			<td>
 				<a href="<?php echo add_query_arg( array(
+					'show'   => 'allevent',
+					'sex'    => '0',
+					'min'    => '21',
+					'ssn_id' => $attr['ssn_id']
+				), $base ); ?>">All-Event Damen</a>
+			</td>
+			<td>
+				<a href="<?php echo add_query_arg( array(
+					'show'   => 'allevent',
+					'sex'    => '1',
+					'min'    => '21',
+					'ssn_id' => $attr['ssn_id']
+				), $base ); ?>">All-Event Herren</a>
+			</td>
+			<td>
+				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
 					'klss_id' => '1,2,3',
 					'ssn_id'  => $attr['ssn_id']
@@ -160,13 +176,38 @@ function bwdbShowAvg( $attr ) {
 			bwdbShowSktnList( $attr );
 			break;
 		case "schnitt":
-			$attr['bwrb_id'] = '1'; // nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
+			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
+			if ( $attr['ssn_id'] < 4 ) {
+				$attr['bwrb_id'] = '1'; // bis Saison 2014/15 für Schnittliste nur TN aus 4er
+			} else {
+				$attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
+			}
 			switch ( $_REQUEST['sex'] ) {
 				case '0':
 					echo '<h2>Schnittliste Damen</h2>';
 					break;
 				case '1':
 					echo '<h2>Schnittliste Herren</h2>';
+					break;
+				default:
+					echo '<h2>Schnittliste</h2>';
+					break;
+			}
+			bwdbShowAvgList( $attr );
+			break;
+		case "allevent":
+			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
+			if ( $attr['ssn_id'] < 4 ) {
+				$attr['bwrb_id'] = '1'; // bis Saison 2014/15 für Schnittliste nur TN aus 4er
+			} else {
+				$attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
+			}
+			switch ( $_REQUEST['sex'] ) {
+				case '0':
+					echo '<h2>All-Event Damen</h2>';
+					break;
+				case '1':
+					echo '<h2>All-Event Herren</h2>';
 					break;
 				default:
 					echo '<h2>Schnittliste</h2>';
@@ -212,7 +253,6 @@ function bwdbShowAvgList( $attr ) {
 			<th>NSp.</th>
 			<th>%-Abw *</th>
 			<th>DSp. **</th>
-			<th>HSer</th>
 		</tr>
 		</thead>
 		<tfoot>
@@ -224,10 +264,13 @@ function bwdbShowAvgList( $attr ) {
 		</tr>
 		</tfoot>
 		</tbody>
-		<?php $allevent = $attr[ min ];
-		$k              = 0;
+
+		<?php
+		$allevent = $attr['min'];
+		$k        = 0;
+
 		foreach ( $schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
-			if ( $schnitt->anzahl >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
+			if ( $schnitt->anz_allevent >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
 				$k ++;
 				?>
 				<tr>
@@ -267,7 +310,6 @@ function bwdbShowAvgList( $attr ) {
 					<td align="right"><?php echo $schnitt->minspl; ?></td>
 					<td align="right"><?php echo $schnitt->avgminspl; ?>%</td>
 					<td align="right"><?php echo $schnitt->diffspl; ?></td>
-					<td align="right"><?php echo $schnitt->hser; ?></td>
 				</tr>
 				<?php
 			}
@@ -290,7 +332,7 @@ function bwdbShowSktnList( $attr ) {
 	// Aufruf Funktion Statistik
 
 	$attr['team']    = 'true';
-	$attr['orderby'] = 'schnitt DESC';
+	$attr['orderby'] = 'pins DESC';
 	$attr['reserve'] = '0';
 
 	$data = bwdb_get_data( $attr );
@@ -325,8 +367,10 @@ function bwdbShowSktnList( $attr ) {
 		</tr>
 		</thead>
 		</tbody>
-		<?php $allevent = $attr[ min ];
-		$k              = 0;
+
+		<?php
+
+		$k = 0;
 		foreach ( $data as $team ) {
 			$k ++;    // Schleife Ausgabe Team
 			?>
@@ -437,6 +481,7 @@ function bwdbShowSpieler( $attr ) {
 	</table>
 	<?php
 }
+
 
 /*********************************************/
 /* 			Funktion VEREIN     			 */
@@ -873,6 +918,7 @@ function bwdb_get_data( $attr ) {
 								MIN(g.ergebnis) AS minspl,
 								(MAX(g.ergebnis)-MIN(g.ergebnis)) AS diffspl,
 								COUNT(g.ergebnis) AS anzahl,
+								COUNT( CASE WHEN  b.bwrb_id IN (1) THEN g.ergebnis END) AS anz_allevent,
 								ROUND(AVG(g.ergebnis),3) AS schnitt,
 								ROUND(((MAX(g.ergebnis)/AVG(g.ergebnis)*100)-100),2) AS avgmaxspl,
 								ROUND(((MIN(g.ergebnis)/AVG(g.ergebnis)*100)-100),2) AS avgminspl,
@@ -1013,8 +1059,9 @@ function bwdb_get_data( $attr ) {
 	$result = $wpdb->get_results( "SELECT $found_rows $fields $calculations 1+1 $from $join $where $groupby $orderby $limits " );
 
 	// @debug:
+	// $debug = false;
 	// $debug = true;
-	if ( true == $debug ) {
+	if ( true == $debug && current_user_can( 'manage_options' ) ) {
 
 		print_bwdb( $attr );
 		$wpdb->print_error;
