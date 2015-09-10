@@ -193,7 +193,7 @@ function bwdb_message( $errors ) {
 // Ermitteln von Runde / Manschafft etc
 function bwdb_form_choose() {
 
-	$attr['ssn_id'] = '3';   // @todo Saison über DB ermitteln!!!
+	$attr['ssn_id'] = '4';   // @todo Saison über DB ermitteln!!!
 
 	?>
 	<div class="form-wrap">
