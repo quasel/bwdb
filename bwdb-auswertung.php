@@ -230,7 +230,7 @@ function bwdbShowAvgList( $attr ) {
 
 	?>
 
-	<table class="bwdb">
+	<table id="bwdb" "class="bwdb" >
 		<thead>
 		<tr>
 			<th></th>
@@ -346,7 +346,7 @@ function bwdbShowSktnList( $attr ) {
 	<h2><?php foreach ( $klasse as $klasse ) {
 			echo '/ ' . $klasse->klasse . ' /';
 		} ?></h2>
-	<table class="bwdb">
+	<table id="bwdb" class="bwdb" >
 		<thead>
 		<tr>
 			<th></th>
@@ -415,7 +415,7 @@ function bwdbShowSpieler( $attr ) {
 	$spalten = 6; // @todo
 	?>
 
-	<table class="bwdb">
+	<table id="bwdb" "class="bwdb" >
 		<thead>
 		<tr>
 			<th colspan="<?php echo $spalten + 4; ?>">Ergebnis-Details</th>
@@ -565,7 +565,7 @@ function bwdbShowSektion( $attr ) {
 	<?php
 	foreach ( $result as $nr => $runde ) {
 		?>
-		<table class="bwdb">
+		<table "class="bwdb" >
 		<tbody>
 		<tr>
 			<td>Runde: <?php echo $nr; ?></td>
