@@ -605,7 +605,7 @@ add_filter( 'gform_pre_submission_filter_1', 'populate_splr' );
 add_filter( 'gform_admin_pre_render_1', 'populate_splr' );
 function populate_splr( $form ) {
 
-    // print_bwdb( $form);
+	// print_bwdb( $form);
 	foreach ( $form['fields'] as &$field ) {
 
 		if ( $field->type != 'select' || strpos( $field->cssClass, 'populate-splr' ) === false ) {
@@ -615,15 +615,15 @@ function populate_splr( $form ) {
 
 		$_POST['sktn_id'];
 
-        // $name = 'sktn_id'
+		// $name = 'sktn_id'
 		// you can add additional parameters here to alter the posts that are retrieved
 		// more info: http://codex.wordpress.org/Template_Tags/get_posts
 		$posts = get_posts( array(
-				'numberposts'    => - 1,
-				'post_status'    => 'publish',
-				'post_type'      => 'splr',
-				'meta_key'       => 'rel_sktn_klss_ssn',
-				'meta_value'     => $_GET['sktn_id'], // @todo: ABSICHERN !!!! optimieren ...
+				'numberposts' => - 1,
+				'post_status' => 'publish',
+				'post_type'   => 'splr',
+				'meta_key'    => 'rel_sktn_klss_ssn',
+				'meta_value'  => $_GET['sktn_id'], // @todo: ABSICHERN !!!! optimieren ...
 			)
 		);
 
@@ -689,7 +689,7 @@ function my_custom_population_function( $value, $field, $name ) {
 	// wp_die( print_bwdb( $field ));
 	print_bwdb( $name, 'name' );
 	// print_bwdb( $field, 'Field_Test' );
-	print_bwdb( $value, 'Value');
+	print_bwdb( $value, 'Value' );
 
 	return $value;
 }

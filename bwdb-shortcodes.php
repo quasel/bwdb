@@ -63,12 +63,12 @@ class BwDb_Shortcodes {
 
 		$debug = false;
 		if ( true == $debug && current_user_can( 'manage_options' ) ) {
-			print_bwdb( home_url(), 'Home');
+			print_bwdb( home_url(), 'Home' );
 
 			$base = home_url();
 
 			$link = add_query_arg( array(
-				'test' => 'test',
+				'test'  => 'test',
 				'test2' => 'test2'
 			), $base );
 
