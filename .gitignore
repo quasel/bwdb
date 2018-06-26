@@ -19,3 +19,12 @@ wp-content/plugins/hello.php
 
 
 # Created by .ignore support plugin (hsz.mobi)
+.idea/.name
+.idea/bwdb.iml
+.idea/deployment.xml
+.idea/dictionaries/quasel.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/php.xml
+.idea/vcs.xml
+.idea/workspace.xml
