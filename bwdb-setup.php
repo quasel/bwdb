@@ -1,7 +1,7 @@
 <?php
 
-if ( preg_match( '#' . basename( __FILE__ ) . '#', $_SERVER['PHP_SELF'] ) ) {
-	die( 'You are not allowed to call this page directly.' );
+if (preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
+    die('You are not allowed to call this page directly.');
 }
 
 /* Marc Perel - bwdb Twitter List Setup Code */
@@ -13,11 +13,12 @@ if ( preg_match( '#' . basename( __FILE__ ) . '#', $_SERVER['PHP_SELF'] ) ) {
  * @return void
  */
 
-function bwdb_setup_db() {
-	//NB Always set wpdb globally!
-	global $wpdb, $wp_roles, $wp_version;
+function bwdb_setup_db()
+{
+    //NB Always set wpdb globally!
+    global $wpdb, $wp_roles, $wp_version;
 
-	// Check for capability
+    // Check for capability
 //	if ( !current_user_can('activate_plugins') )
 //		wp_die( __( 'Cheatin&#8217; uh?' ) );
 //		return;
@@ -30,39 +31,37 @@ function bwdb_setup_db() {
 //		return;
 //	}
 
-	// upgrade function changed in WordPress 2.3 - needed for dbDelta()
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    // upgrade function changed in WordPress 2.3 - needed for dbDelta()
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 
-	// add charset & collate like wp core
-	$charset_collate = '';
+    // add charset & collate like wp core
+    $charset_collate = '';
 
-	if ( version_compare( mysql_get_server_info(), '4.1.0', '>=' ) ) {
-		if ( ! empty( $wpdb->charset ) ) {
-			$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
-		}
-		if ( ! empty( $wpdb->collate ) ) {
-			$charset_collate .= " COLLATE $wpdb->collate";
-		}
-	}
+    if (version_compare(mysql_get_server_info(), '4.1.0', '>=')) {
+        if (!empty($wpdb->charset))
+            $charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+        if (!empty($wpdb->collate))
+            $charset_collate .= " COLLATE $wpdb->collate";
+    }
 
 
-	//Set Table Name
-	$bwdb_klasse    = $wpdb->prefix . 'bwdb_klasse';
-	$bwdb_sektion   = $wpdb->prefix . 'bwdb_sektion';
-	$bwdb_spiel     = $wpdb->prefix . 'bwdb_spiel';
-	$bwdb_spieler   = $wpdb->prefix . 'bwdb_spieler';
-	$bwdb_splr_sktn = $wpdb->prefix . 'bwdb_splr_sktn';
-	$bwdb_verein    = $wpdb->prefix . 'bwdb_verein';
+    //Set Table Name
+    $bwdb_klasse = $wpdb->prefix . 'bwdb_klasse';
+    $bwdb_sektion = $wpdb->prefix . 'bwdb_sektion';
+    $bwdb_spiel = $wpdb->prefix . 'bwdb_spiel';
+    $bwdb_spieler = $wpdb->prefix . 'bwdb_spieler';
+    $bwdb_splr_sktn = $wpdb->prefix . 'bwdb_splr_sktn';
+    $bwdb_verein = $wpdb->prefix . 'bwdb_verein';
 
 
-	// Create the main Table, don't forget the ( ` ) - MySQL Reference @ http://www.w3schools.com/Sql/sql_create_table.asp
-	// could be case senstive : http://dev.mysql.com/doc/refman/5.1/en/identifier-case-sensitivity.html
+    // Create the main Table, don't forget the ( ` ) - MySQL Reference @ http://www.w3schools.com/Sql/sql_create_table.asp
+    // could be case senstive : http://dev.mysql.com/doc/refman/5.1/en/identifier-case-sensitivity.html
 
 
-	if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$bwdb_klasse'" ) ) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_klasse'")) {
 
-		$sql = "CREATE TABLE " . $bwdb_klasse . " (
+        $sql = "CREATE TABLE " . $bwdb_klasse . " (
 		klss_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
 		name VARCHAR(255) NOT NULL ,
 		anz_runden BIGINT(20) NOT NULL ,
@@ -73,13 +72,13 @@ function bwdb_setup_db() {
 		PRIMARY KEY klss_id (klss_id)
 		) $charset_collate;";
 
-		dbDelta( $sql );
-	}
+        dbDelta($sql);
+    }
 
 
-	if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$bwdb_sektion'" ) ) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_sektion'")) {
 
-		$sql = "CREATE TABLE " . $bwdb_sektion . " (
+        $sql = "CREATE TABLE " . $bwdb_sektion . " (
 		sktn_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
         name VARCHAR(255) NOT NULL ,
 		vrn_id BIGINT(20) DEFAULT '0' NOT NULL ,
@@ -91,12 +90,12 @@ function bwdb_setup_db() {
 		KEY klss_id (klss_id)
 		) $charset_collate;";
 
-		dbDelta( $sql );
-	}
+        dbDelta($sql);
+    }
 
-	if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$bwdb_spiel'" ) ) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_spiel'")) {
 
-		$sql = "CREATE TABLE " . $bwdb_spiel . " (
+        $sql = "CREATE TABLE " . $bwdb_spiel . " (
 		spl_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
 		splr_id BIGINT(20) NOT NULL ,
 		sktn_id BIGINT(20) NOT NULL ,
@@ -111,13 +110,13 @@ function bwdb_setup_db() {
 		PRIMARY KEY spl_id (spl_id)
 		) $charset_collate;";
 
-		dbDelta( $sql );
-	}
+        dbDelta($sql);
+    }
 
 
-	if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$bwdb_spieler'" ) ) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_spieler'")) {
 
-		$sql = "CREATE TABLE " . $bwdb_spieler . " (
+        $sql = "CREATE TABLE " . $bwdb_spieler . " (
 		splr_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
         vorname VARCHAR(255) NOT NULL ,
         nachname VARCHAR(255) NOT NULL ,
@@ -128,13 +127,13 @@ function bwdb_setup_db() {
 		PRIMARY KEY splr_id (splr_id)
 		) $charset_collate;";
 
-		dbDelta( $sql );
-	}
+        dbDelta($sql);
+    }
 
 
-	if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$bwdb_splr_sktn'" ) ) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_splr_sktn'")) {
 
-		$sql = "CREATE TABLE " . $bwdb_splr_sktn . " (
+        $sql = "CREATE TABLE " . $bwdb_splr_sktn . " (
 		sktn_id BIGINT(20) NOT NULL ,
 		splr_id BIGINT(20) NOT NULL ,
 		korr VARCHAR(255) NOT NULL ,
@@ -142,12 +141,12 @@ function bwdb_setup_db() {
 		PRIMARY KEY (sktn_id, splr_id)
 		) $charset_collate;";
 
-		dbDelta( $sql );
-	}
+        dbDelta($sql);
+    }
 
-	if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$bwdb_verein'" ) ) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_verein'")) {
 
-		$sql = "CREATE TABLE " . $bwdb_verein . " (
+        $sql = "CREATE TABLE " . $bwdb_verein . " (
 		vrn_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
         name VARCHAR(255) NOT NULL ,
 		korr VARCHAR(255) NOT NULL ,
@@ -155,17 +154,17 @@ function bwdb_setup_db() {
 		PRIMARY KEY vrn_id (vrn_id)
 		) $charset_collate;";
 
-		dbDelta( $sql );
-	}
+        dbDelta($sql);
+    }
 
-	// check one table again, to be sure
+    // check one table again, to be sure
 //	if( !$wpdb->get_var( "SHOW TABLES LIKE '$bwdb_bewerb'" ) ) {
 //		update_option( "ngg_init_check", __('NextGEN Gallery : Tables could not created, please check your database settings',"nggallery") );
 //		return;
 //	}	
 
 
-	// los gehts
+    // los gehts
 
 }
 

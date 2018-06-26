@@ -10,7 +10,7 @@
 class BwDb_Shortcodes {
 
 	// register the new shortcodes
-	function BwDb_shortcodes() {
+	function __construct() {
 
 		//Long posts should require a higher limit, see http://core.trac.wordpress.org/ticket/8553
 		//@ini_set('pcre.backtrack_limit', 500000);
@@ -52,8 +52,28 @@ class BwDb_Shortcodes {
 			'sex'              => '',
 			'reserve'          => '',
 			'min'              => '1',
-			'show'             => ''
+			'show'             => '',
+			'runde'            => '',
+			'output'           => '',
+			'limit'            => '',
+			'orderby'          => '',
+			'id'               => 'bwdb',
+			'title'            => '',
 		), $merged );
+
+		$debug = false;
+		if ( true == $debug && current_user_can( 'manage_options' ) ) {
+			print_bwdb( home_url(), 'Home');
+
+			$base = home_url();
+
+			$link = add_query_arg( array(
+				'test' => 'test',
+				'test2' => 'test2'
+			), $base );
+
+			print_bwdb( $link );
+		}
 
 		bwdbShowAvg( $final );
 
