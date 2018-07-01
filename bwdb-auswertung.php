@@ -29,7 +29,7 @@ function bwdb_auswertung() {
 }
 
 function bwdbShowAvg( $attr ) {
-// @todo:  $attr durchgängi nutzen nicht mla aus dem Request und mal so möglich?
+// @todo:  $attr durchgängi nutzen nicht mal aus dem Request und mal so möglich?
 
 	// home_url() = $_SERVER['REQUEST'];
 	// home_url() = home_url();
@@ -70,13 +70,15 @@ function bwdbShowAvg( $attr ) {
 		// do stuff
 
 	} else {
-
+	    global $wp;
+        $current_url = home_url( add_query_arg( array(), $wp->request ) );
+        $current_url = get_permalink();
 		// Anzeige aller Städte
 		$vereine = bwdb_get_data( array( 'output' => 'verein' ) );
 		$verein  = "";
 
 		foreach ( $vereine as $vrn ) {
-			$link   = home_url(); //reset
+			$link   = $current_url; //reset
 			$link   = add_query_arg( array(
 				'show'   => 'verein',
 				'vrn_id' => $vrn->vrn_id,
@@ -98,29 +100,21 @@ function bwdbShowAvg( $attr ) {
 						'show'    => 'klss_ssn',
 						'klss_id' => '',
 						'ssn_id'  => $attr['ssn_id']
-					), home_url() ); ?>">Mannschaften BSG Turnier</a>
-                </li>
-                <li class="menu-item">
-                    <a href="<?php echo add_query_arg( array(
-						'show'    => 'vrn_ssn',
-						'klss_id' => '',
-						'ssn_id'  => $attr['ssn_id'],
-						'runde'   => '3'
-					), home_url() ); ?>">Städte-Finale</a>
+					), $current_url ); ?>">Teams</a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo add_query_arg( array(
 						'show'   => 'schnitt',
 						'sex'    => '0',
 						'ssn_id' => $attr['ssn_id']
-					), home_url() ); ?>">Schnittliste Damen</a>
+					), $current_url ); ?>">Women</a>
                 </li class="menu-item">
                 <li>
                     <a href="<?php echo add_query_arg( array(
 						'show'   => 'schnitt',
 						'sex'    => '1',
 						'ssn_id' => $attr['ssn_id']
-					), home_url() ); ?>">Schnittliste Herren</a>
+					), $current_url ); ?>">Men</a>
                 </li class="menu-item">
             </ul>
         </nav>
@@ -252,6 +246,8 @@ function bwdbShowAvgList( $attr ) {
 	<?php
 	$allevent = $attr['min'];
 	$k        = 0;
+	$current_url = get_permalink();
+
 
 	foreach ( $schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
 		if ( $schnitt->anz_allevent >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
@@ -260,7 +256,7 @@ function bwdbShowAvgList( $attr ) {
             <tr>
                 <td align="right"><?php echo $k, '.'; ?></td>
                 <td align="left">    <?php
-					$link     = home_url(); //reset
+					$link     = $current_url; //reset
 					$link     = add_query_arg( array(
 						'show'    => 'spieler',
 						'splr_id' => $schnitt->splr_id,
@@ -274,7 +270,7 @@ function bwdbShowAvgList( $attr ) {
 						$schnitt->sktn_list );
 					echo $aspieler; ?></td>
                 <td align="left"><?php
-					$link    = home_url(); //reset
+					$link    = $current_url; //reset
 					$link    = add_query_arg( array(
 						'show'   => 'verein',
 						'vrn_id' => $schnitt->vrn_id,
@@ -410,13 +406,16 @@ function bwdbShowSktnList( $attr ) {
 			<?php
 
 			$k = 0;
+			$current_url = get_permalink();
+
+
 			foreach ( $data as $team ) {
 				$k ++;    // Schleife Ausgabe Team
 				?>
                 <tr>
                     <td align="right"><?php echo $k; ?></td>
                     <td align="left">    <?php
-						$link           = home_url(); //reset
+						$link           = $current_url; //reset
 						$link           = add_query_arg( array(
 							'show'    => 'sktn_klss_ssn',
 							'sktn_id' => $team->sktn_id,
@@ -428,7 +427,7 @@ function bwdbShowSktnList( $attr ) {
 							$team->sektion );
 						echo $asktn_klss_ssn; ?></td>
                     <td align="left">    <?php
-						$link   = home_url(); //reset
+						$link   = $current_url; //reset
 						$link   = add_query_arg( array(
 							'show'   => 'verein',
 							'vrn_id' => $team->vrn_id,
@@ -506,15 +505,16 @@ function bwdbShowVrnList( $attr ) {
         </tbody>
 
 		<?php
-
 		$k = 0;
+		$current_url = get_permalink();
+
 		foreach ( $data as $team ) {
 			$k ++;    // Schleife Ausgabe Team
 			?>
             <tr>
                 <td align="right"><?php echo $k; ?></td>
                 <td align="left">    <?php
-					$link   = home_url(); //reset
+					$link   = $current_url; //reset
 					$link   = add_query_arg( array(
 						'show'   => 'verein',
 						'vrn_id' => $team->vrn_id,
@@ -1097,7 +1097,7 @@ function bwdb_get_data( $attr ) {
 		case 'verein':
 			$pod_name = 'vrn';
 			$fields   = 't.*, t.post_title as verein, t.ID as vrn_id,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
-			$orderby  = 't.ID';
+			$orderby  = 't.post_title';
 			break;
 
 		case 'vrn_ssn':
