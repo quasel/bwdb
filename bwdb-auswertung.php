@@ -7,8 +7,8 @@ function bwdb_auswertung() {
 	global $wpdb;
 
 	?>
-    <h1>Spielwiese...</h1>
-    <hr>
+	<h1>Spielwiese...</h1>
+	<hr>
 	<?php
 	// Aufruf
 	// BwDb_shortcodes::bwdbShow( array ( sktn_klss_ssn_id => '6', show => 'sktn_klss_ssn') );
@@ -24,112 +24,128 @@ function bwdb_auswertung() {
 	// @todo - DB - Name ändern in verein ? -> natural joins ....
 
 	?>
-    <hr>
+	<hr>
 	<?php
 }
 
 function bwdbShowAvg( $attr ) {
 // @todo:  $attr durchgängi nutzen nicht mla aus dem Request und mal so möglich?
 
-	// home_url() = $_SERVER['REQUEST'];
-	// home_url() = home_url();
+	$base           = $_SERVER['REQUEST'];
+	$attr['ssn_id'] = $_REQUEST['ssn_id'];
 
-	if ( ! isset( $attr['ssn_id'] ) ) {
-		$attr['ssn_id'] = $_REQUEST['ssn_id'];
-	}
+	// Ausgabe der Saisonen in einer ul - die aktuelle Saison erhält die klasse: active
+	echo '<div class="bwdb_saison saison"><ul class="bwdb_saison saison">';
 
-	/*	// Ausgabe der Saisonen in einer ul - die aktuelle Saison erhält die klasse: active
-		echo '<div class="bwdb_saison saison"><ul class="bwdb_saison saison">';
-
-		$saison = bwdb_get_data( array( 'output' => 'saison', 'orderby' => 'ssn_id DESC' ) );
-		foreach ( $saison as $saison ) {
-			if ( ! isset( $attr['ssn_id'] ) ) {
-				$attr['ssn_id'] = $saison->ssn_id;
-			}
-			$link = $_SERVER['REQUEST']; //reset
-			$link = add_query_arg( 'ssn_id', $saison->ssn_id );
-
-			if ( $attr['ssn_id'] == $saison->ssn_id ) {
-				$class = 'class="active"';
-			} else {
-				$class = '';
-			}
-
-			$asktn_klss_ssn = sprintf( '<li %4$s><a href="%1$s" title="%2$s">%3$s</a></li>',
-				$link,
-				$saison->saison,
-				$saison->saison,
-				$class );
-
-			echo $asktn_klss_ssn;
+	$saison = bwdb_get_data( array( 'output' => 'saison', 'orderby' => 'ssn_id DESC' ) );
+	foreach ( $saison as $saison ) {
+		if ( ! isset( $attr['ssn_id'] ) ) {
+			$attr['ssn_id'] = $saison->ssn_id;
 		}
-		echo '</ul></div>';*/
+		$link = $_SERVER['REQUEST']; //reset
+		$link = add_query_arg( 'ssn_id', $saison->ssn_id );
 
-
-	if ( 'best_off_hspl' == $attr['output'] || 'best_off_hser' == $attr['output'] ) {
-		// do stuff
-
-	} else {
-
-		// Anzeige aller Städte
-		$vereine = bwdb_get_data( array( 'output' => 'verein' ) );
-		$verein  = "";
-
-		foreach ( $vereine as $vrn ) {
-			$link   = home_url(); //reset
-			$link   = add_query_arg( array(
-				'show'   => 'verein',
-				'vrn_id' => $vrn->vrn_id,
-				'ssn_id' => $attr['ssn_id']
-			), $link );
-			$verein .= sprintf( '<li class="menu-item"><a href="%1$s" title="%3$s">%3$s</a></li>',
-				$link,
-				$vrn->vrn_id,
-				$vrn->verein
-			);
+		if ( $attr['ssn_id'] == $saison->ssn_id ) {
+			$class = 'class="active"';
+		} else {
+			$class = '';
 		}
-		echo "<nav id='bwdb-menu-verein'><ul class='nav-menu'>$verein</ul></nav>";
 
-		?>
-        <nav id="bwdb-menu">
-            <ul class="nav-menu">
-                <li class="menu-item">
-                    <a href="<?php echo add_query_arg( array(
-						'show'    => 'klss_ssn',
-						'klss_id' => '',
-						'ssn_id'  => $attr['ssn_id']
-					), home_url() ); ?>">Mannschaften BSG Turnier</a>
-                </li>
-                <li class="menu-item">
-                    <a href="<?php echo add_query_arg( array(
-						'show'    => 'vrn_ssn',
-						'klss_id' => '',
-						'ssn_id'  => $attr['ssn_id'],
-						'runde'   => '3'
-					), home_url() ); ?>">Städte-Finale</a>
-                </li>
-                <li class="menu-item">
-                    <a href="<?php echo add_query_arg( array(
-						'show'   => 'schnitt',
-						'sex'    => '0',
-						'ssn_id' => $attr['ssn_id']
-					), home_url() ); ?>">Schnittliste Damen</a>
-                </li class="menu-item">
-                <li>
-                    <a href="<?php echo add_query_arg( array(
-						'show'   => 'schnitt',
-						'sex'    => '1',
-						'ssn_id' => $attr['ssn_id']
-					), home_url() ); ?>">Schnittliste Herren</a>
-                </li class="menu-item">
-            </ul>
-        </nav>
-		<?php
+		$asktn_klss_ssn = sprintf( '<li %4$s><a href="%1$s" title="%2$s">%3$s</a></li>',
+			$link,
+			$saison->saison,
+			$saison->saison,
+			$class );
+
+		echo $asktn_klss_ssn;
 	}
+	echo '</ul></div>';
+	?>
+
+	<div class="bwdb_result saison">
+		<ul class="bwdb_schnitt saison">
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'   => 'schnitt',
+					'sex'    => '0',
+					'ssn_id' => $attr['ssn_id']
+				), $base ); ?>">Damen</a>
+			</li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'   => 'schnitt',
+					'sex'    => '1',
+					'ssn_id' => $attr['ssn_id']
+				), $base ); ?>">Herren</a>
+			</li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'   => 'allevent',
+					'sex'    => '0',
+					'min'    => '21',
+					'ssn_id' => $attr['ssn_id']
+				), $base ); ?>">All-Event Damen</a>
+			</li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'   => 'allevent',
+					'sex'    => '1',
+					'min'    => '21',
+					'ssn_id' => $attr['ssn_id']
+				), $base ); ?>">All-Event Herren</a>
+			</li>
+		</ul>
+		<ul class="bwdb_bewerbe saison">
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'    => 'klss_ssn',
+					'klss_id' => '1,2,3',
+					'ssn_id'  => $attr['ssn_id']
+				), $base ); ?>">4er
+					Gesamt</a></li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'    => 'klss_ssn',
+					'klss_id' => '1',
+					'ssn_id'  => $attr['ssn_id']
+				), $base ); ?>">4er
+					Gruppe A</a></li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'    => 'klss_ssn',
+					'klss_id' => '2',
+					'ssn_id'  => $attr['ssn_id']
+				), $base ); ?>">4er
+					Gruppe B</a></li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'    => 'klss_ssn',
+					'klss_id' => '3',
+					'ssn_id'  => $attr['ssn_id']
+				), $base ); ?>">4er
+					Gruppe C</a></li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'    => 'klss_ssn',
+					'klss_id' => '4',
+					'ssn_id'  => $attr['ssn_id']
+				), $base ); ?>">Damen-Doppel</a>
+			</li>
+			<li>
+				<a href="<?php echo add_query_arg( array(
+					'show'    => 'klss_ssn',
+					'klss_id' => '5',
+					'ssn_id'  => $attr['ssn_id']
+				), $base ); ?>">Mix-Doppel</a>
+			</li>
+		</ul>
+	</div>
+	<hr/>
+	<?php
+
 	$show = $attr['show'];
 
-// $debug = true;
-	$debug = false;
+	// $debug = true;
 	if ( true == $debug ) {
 		echo '<h2> Aufruf erfolgt mit: </h2>';
 		print_r( $attr );
@@ -149,31 +165,23 @@ function bwdbShowAvg( $attr ) {
 		case "klss_ssn";
 			bwdbShowSktnList( $attr );
 			break;
-		case "vrn_ssn";
-			bwdbShowVrnList( $attr );
-			break;
-		case "best_off";
-			bwdbShowBest( $attr );
-			break;
 		case "schnitt":
 			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
 			if ( $attr['ssn_id'] < 4 ) {
 				$attr['bwrb_id'] = '1'; // bis Saison 2014/15 für Schnittliste nur TN aus 4er
 			} else {
-				// $attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
+				$attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
 			}
-			if ( empty( $attr['title'] ) ) {
-				switch ( $_REQUEST['sex'] ) {
-					case '0':
-						$attr['title'] = "Schnittliste Damen";
-						break;
-					case '1':
-						$attr['title'] = "Schnittliste Herren";
-						break;
-					default:
-						$attr['title'] = "Schnittliste";
-						break;
-				}
+			switch ( $_REQUEST['sex'] ) {
+				case '0':
+					echo '<h2>Schnittliste Damen</h2>';
+					break;
+				case '1':
+					echo '<h2>Schnittliste Herren</h2>';
+					break;
+				default:
+					echo '<h2>Schnittliste</h2>';
+					break;
 			}
 			bwdbShowAvgList( $attr );
 			break;
@@ -184,18 +192,16 @@ function bwdbShowAvg( $attr ) {
 			} else {
 				$attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
 			}
-			if ( empty( $attr['title'] ) ) {
-				switch ( $_REQUEST['sex'] ) {
-					case '0':
-						$attr['title'] = "All-Event Damen";
-						break;
-					case '1':
-						$attr['title'] = "All-Event Herren";
-						break;
-					default:
-						$attr['title'] = "Schnittliste";
-						break;
-				}
+			switch ( $_REQUEST['sex'] ) {
+				case '0':
+					echo '<h2>All-Event Damen</h2>';
+					break;
+				case '1':
+					echo '<h2>All-Event Herren</h2>';
+					break;
+				default:
+					echo '<h2>Schnittliste</h2>';
+					break;
 			}
 			bwdbShowAvgList( $attr );
 			break;
@@ -214,132 +220,95 @@ function bwdbShowAvgList( $attr ) {
 
 	// Aufruf Funktion Statistik
 
-	$attr['single'] = true;
+	$attr['single']  = true;
+	$attr['orderby'] = 'schnitt DESC';
 
-	if ( empty( $attr['orderby'] ) ) {
-		$attr['orderby'] = 'schnitt DESC';
-	}
 
 	$schnittliste = bwdb_get_data( $attr );
 
 	?>
 
-	<?php if ( ! empty( $attr['title'] ) ) { ?>
-        <h3><?php echo $attr['title']; ?></h3>
-	<?php } ?>
-    <table id="<?php echo $attr['id']; ?>" "class="bwdb" >
+	<table id="bwdb" "class="bwdb" >
+		<thead>
+		<tr>
+			<th></th>
+			<th>Pass#</th>
+			<th>Spielername</th>
+			<th>Verein</th>
+			<th>Pins</th>
+			<th>Sp.</th>
+			<th>Schnitt</th>
+			<th>HSp.</th>
+			<th>%-Abw *</th>
+			<th>NSp.</th>
+			<th>%-Abw *</th>
+			<th>DSp. **</th>
+		</tr>
+		</thead>
+		<tfoot>
+		<tr>
+			<td colspan="12">* Prozentuelle Abweichung vom Schnitt</td>
+		</tr>
+		<tr>
+			<td colspan="12">** Differenz zwischen Höchstem und Niedrigstem Spiel</td>
+		</tr>
+		</tfoot>
+		</tbody>
 
-    <thead>
-    <tr>
-        <th></th>
-        <th>Spielername</th>
-        <th>Verein</th>
-        <th>Pins</th>
-        <th>Sp.</th>
-        <th>Schnitt</th>
-        <th>HSp.</th>
-        <th>HSER</th>
-        <th>%-Abw *</th>
-        <th>NSp.</th>
-        <th>%-Abw *</th>
-        <th>DSp. **</th>
-    </tr>
-    </thead>
-    <tfoot>
-    </tfoot>
-    </tbody>
+		<?php
+		$allevent = $attr['min'];
+		$k        = 0;
 
-	<?php
-	$allevent = $attr['min'];
-	$k        = 0;
-
-	foreach ( $schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
-		if ( $schnitt->anz_allevent >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
-			$k ++;
-			?>
-            <tr>
-                <td align="right"><?php echo $k, '.'; ?></td>
-                <td align="left">    <?php
-					$link     = home_url(); //reset
-					$link     = add_query_arg( array(
-						'show'    => 'spieler',
-						'splr_id' => $schnitt->splr_id,
-						'ssn_id'  => $attr['ssn_id']
-					), $link );
-					$aspieler = sprintf( '<a href="%1$s" title="%5$s">%3$s %4$s</a>',
-						$link,
-						$schnitt->splr_id,
-						$schnitt->vorname,
-						$schnitt->nachname,
-						$schnitt->sktn_list );
-					echo $aspieler; ?></td>
-                <td align="left"><?php
-					$link    = home_url(); //reset
-					$link    = add_query_arg( array(
-						'show'   => 'verein',
-						'vrn_id' => $schnitt->vrn_id,
-						'ssn_id' => $attr['ssn_id']
-					), $link );
-					$averein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-						$link,
-						$schnitt->vrn_id,
-						$schnitt->verein
-					);
-					echo $averein; ?></td>
-                <td align="right"><?php echo $schnitt->pins; ?></td>
-                <td align="right"><?php echo $schnitt->anzahl; ?></td>
-                <td align="right"><?php echo $schnitt->schnitt; ?></td>
-                <td align="right"><?php echo $schnitt->hsp; ?></td>
-                <td align="right"><?php echo $schnitt->hser; ?></td>
-                <td align="right"><?php echo $schnitt->avgmaxspl; ?>%</td>
-                <td align="right"><?php echo $schnitt->minspl; ?></td>
-                <td align="right"><?php echo $schnitt->avgminspl; ?>%</td>
-                <td align="right"><?php echo $schnitt->diffspl; ?></td>
-            </tr>
-			<?php
+		foreach ( $schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
+			if ( $schnitt->anz_allevent >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
+				$k ++;
+				?>
+				<tr>
+					<td align="right"><?php echo $k, '.'; ?></td>
+					<td align="right"><?php echo $schnitt->splr_id; ?></td>
+					<td align="left">    <?php
+						$link     = $_SERVER['REQUEST']; //reset
+						$link     = add_query_arg( array(
+							'show'    => 'spieler',
+							'splr_id' => $schnitt->splr_id,
+							'ssn_id'  => $attr['ssn_id']
+						), $link );
+						$aspieler = sprintf( '<a href="%1$s" title="%2$s">%3$s %4$s</a>',
+							$link,
+							$schnitt->splr_id,
+							$schnitt->vorname,
+							$schnitt->nachname );
+						echo $aspieler; ?></td>
+					<td align="left"><?php
+						$link    = $_SERVER['REQUEST']; //reset
+						$link    = add_query_arg( array(
+							'show'   => 'verein',
+							'vrn_id' => $schnitt->vrn_id,
+							'ssn_id' => $attr['ssn_id']
+						), $link );
+						$averein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+							$link,
+							$schnitt->vrn_id,
+							$schnitt->verein
+						);
+						echo $averein; ?></td>
+					<td align="right"><?php echo $schnitt->pins; ?></td>
+					<td align="right"><?php echo $schnitt->anzahl; ?></td>
+					<td align="right"><?php echo $schnitt->schnitt; ?></td>
+					<td align="right"><?php echo $schnitt->maxspl; ?></td>
+					<td align="right"><?php echo $schnitt->avgmaxspl; ?>%</td>
+					<td align="right"><?php echo $schnitt->minspl; ?></td>
+					<td align="right"><?php echo $schnitt->avgminspl; ?>%</td>
+					<td align="right"><?php echo $schnitt->diffspl; ?></td>
+				</tr>
+				<?php
+			}
 		}
-	}
-	?>
-    </table>
+		?>
+		<tbody>
+	</table>
 
 	<?php
-}
-
-function bwdbShowBest( $attr ) {
-
-	// Aufruf Funktion Statistik
-
-	$attr['limit'] = '5';
-
-	echo '<h2>HSP Mannschaft</h2>';
-	$attr['orderby'] = 'hsp DESC';
-	bwdbShowSktnList( $attr );
-
-	echo '<h2>HSER Mannschaft</h2>';
-	$attr['orderby'] = 'hser DESC';
-	bwdbShowSktnList( $attr );
-
-	echo '<h2>HSP Damen</h2>';
-	$attr['sex']     = '0';
-	$attr['orderby'] = 'hsp DESC';
-	bwdbShowAvgList( $attr );
-
-	echo '<h2>HSER Damen</h2>';
-	$attr['sex']     = '0';
-	$attr['orderby'] = 'hser DESC';
-	bwdbShowAvgList( $attr );
-
-	echo '<h2>HSP Herren</h2>';
-	$attr['sex']     = '1';
-	$attr['orderby'] = 'hsp DESC';
-	bwdbShowAvgList( $attr );
-
-	echo '<h2>HSER Herren</h2>';
-	$attr['sex']     = '1';
-	$attr['orderby'] = 'hser DESC';
-	bwdbShowAvgList( $attr );
-
-
 }
 
 
@@ -352,17 +321,12 @@ function bwdbShowSktnList( $attr ) {
 
 	// Aufruf Funktion Statistik
 
-	if ( empty( $attr['orderby'] ) ) {
-		$attr['orderby'] = 'pins DESC';
-	}
-
 	$attr['team']    = 'true';
+	$attr['orderby'] = 'pins DESC';
 	$attr['reserve'] = '0';
 
-	$data          = bwdb_get_data( $attr );
-	$klassen_liste = "";
+	$data = bwdb_get_data( $attr );
 	//	$debug = true;
-	$debug = false;
 	if ( true == $debug ) {
 		echo '<h2> Aufruf erfolgt mit: </h2>';
 		print_r( $attr );
@@ -372,138 +336,27 @@ function bwdbShowSktnList( $attr ) {
 	}
 
 
-	if ( ! empty( $_REQUEST['klss_id'] ) ) {
-		$klss_id = $_REQUEST['klss_id'];
-		$klasse  = bwdb_get_data( array( 'output' => 'klasse', 'klss_id' => $klss_id ) );
-
-		foreach ( $klasse as $klss ) {
-			$klassen_liste .= '| ' . $klss->klasse . ' |';
-		}
-	} else {
-		$klassen_liste = "Alle Klassen";
-	}
-
-	if ( empty( $attr['title'] ) ) {
-		$attr['title'] = 'Sektionsstatistik';
-	}
+	$klasse = bwdb_get_data( array( 'output' => 'klasse', 'klss_id' => $_REQUEST['klss_id'] ) );
 
 	?>
-    <div class="<?php echo $attr['id']; ?> data_table">
 
-        <h3> <?php echo $attr['title']; ?>: <?php echo $klassen_liste; ?></h3>
 
-        <table id="<?php echo $attr['id']; ?>" class="bwdb">
-            <thead>
-            <tr>
-                <th></th>
-                <th>Sektion</th>
-                <th>Verein</th>
-                <th>Pins</th>
-                <th>Spiele</th>
-                <th>HSp.</th>
-                <th>HSer.</th>
-                <th>Schnitt</th>
-            </tr>
-            </thead>
-            </tbody>
-
-			<?php
-
-			$k = 0;
-			foreach ( $data as $team ) {
-				$k ++;    // Schleife Ausgabe Team
-				?>
-                <tr>
-                    <td align="right"><?php echo $k; ?></td>
-                    <td align="left">    <?php
-						$link           = home_url(); //reset
-						$link           = add_query_arg( array(
-							'show'    => 'sktn_klss_ssn',
-							'sktn_id' => $team->sktn_id,
-							'ssn_id'  => $attr['ssn_id']
-						), $link );
-						$asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-							$link,
-							$team->sktn_klss_ssn_id,
-							$team->sektion );
-						echo $asktn_klss_ssn; ?></td>
-                    <td align="left">    <?php
-						$link   = home_url(); //reset
-						$link   = add_query_arg( array(
-							'show'   => 'verein',
-							'vrn_id' => $team->vrn_id,
-							'ssn_id' => $attr['ssn_id']
-						), $link );
-						$verein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-							$link,
-							$team->vrn_id,
-							$team->verein );
-						echo $verein; ?></td>
-                    <td align="right"><?php echo $team->pins ?></td>
-                    <td align="right"><?php echo $team->anzahl ?></td>
-                    <td align="right"><?php echo $team->hsp ?></td>
-                    <td align="right"><?php echo $team->hser ?></td>
-                    <td align="right"><?php echo $team->schnitt ?></td>
-                </tr>
-			<?php } ?>
-            </tbody>
-        </table>
-    </div>
-	<?php
-}/*********************************************/
-/* 		Funktion VEREIN LISTE ANZEIGE		 */
-/*********************************************/
-function bwdbShowVrnList( $attr ) {
-
-	global $wpdb;
-
-	// Aufruf Funktion Statistik
-
-	$attr['output']  = 'vrn_ssn';
-	$attr['team']    = 'true';
-	$attr['orderby'] = 'pins DESC';
-	$attr['reserve'] = '0';
-
-	$klassen_liste = "";
-
-	$data = bwdb_get_data( $attr );
-	//	$debug = true;
-	$debug = false;
-	if ( true == $debug ) {
-		echo '<h2> Aufruf erfolgt mit: </h2>';
-		print_bwdb( $attr, 'Attr' );
-		echo '<hr>';
-		echo $wpdb->last_query;
-		echo '<hr>';
-	}
-
-	if ( ! empty( $_REQUEST['klss_id'] ) ) {
-		$klss_id = $_REQUEST['klss_id'];
-		$klasse  = bwdb_get_data( array( 'output' => 'klasse', 'klss_id' => $klss_id ) );
-
-		foreach ( $klasse as $klss ) {
-			$klassen_liste .= '| ' . $klss->klasse . ' |';
-		}
-	} else {
-		$klassen_liste = "Alle Klassen";
-	}
-
-	echo "<h3>Vereinsstatistik: $klassen_liste</h3>";
-
-	?>
-    <table id=<?php echo $attr['id']; ?> class="bwdb">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Verein</th>
-            <th>Pins</th>
-            <th>Spiele</th>
-            <th>HSp.</th>
-            <th>HSer.</th>
-            <th>Schnitt</th>
-        </tr>
-        </thead>
-        </tbody>
+	<h2><?php foreach ( $klasse as $klasse ) {
+			echo '/ ' . $klasse->klasse . ' /';
+		} ?></h2>
+	<table id="bwdb" class="bwdb" >
+		<thead>
+		<tr>
+			<th></th>
+			<th>Sektion</th>
+			<th>Pins</th>
+			<th>Spiele</th>
+			<th>HSp.</th>
+			<th>HSer.</th>
+			<th>Schnitt</th>
+		</tr>
+		</thead>
+		</tbody>
 
 		<?php
 
@@ -511,29 +364,29 @@ function bwdbShowVrnList( $attr ) {
 		foreach ( $data as $team ) {
 			$k ++;    // Schleife Ausgabe Team
 			?>
-            <tr>
-                <td align="right"><?php echo $k; ?></td>
-                <td align="left">    <?php
-					$link   = home_url(); //reset
-					$link   = add_query_arg( array(
-						'show'   => 'verein',
-						'vrn_id' => $team->vrn_id,
-						'ssn_id' => $attr['ssn_id']
+			<tr>
+				<td align="right"><?php echo $k; ?></td>
+				<td align="left">    <?php
+					$link           = $_SERVER['REQUEST']; //reset
+					$link           = add_query_arg( array(
+						'show'    => 'sktn_klss_ssn',
+						'sktn_id' => $team->sktn_id,
+						'ssn_id'  => $attr['ssn_id']
 					), $link );
-					$verein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+					$asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
 						$link,
-						$team->vrn_id,
-						$team->verein );
-					echo $verein; ?></td>
-                <td align="right"><?php echo $team->pins ?></td>
-                <td align="right"><?php echo $team->anzahl ?></td>
-                <td align="right"><?php echo $team->hsp ?></td>
-                <td align="right"><?php echo $team->hser ?></td>
-                <td align="right"><?php echo $team->schnitt ?></td>
-            </tr>
+						$team->sktn_klss_ssn_id,
+						$team->sektion );
+					echo $asktn_klss_ssn; ?></td>
+				<td align="right"><?php echo $team->pins ?></td>
+				<td align="right"><?php echo $team->anzahl ?></td>
+				<td align="right"><?php echo $team->hsp ?></td>
+				<td align="right"><?php echo $team->hser ?></td>
+				<td align="right"><?php echo $team->schnitt ?></td>
+			</tr>
 		<?php } ?>
-        </tbody>
-    </table>
+		</tbody>
+	</table>
 
 	<?php
 }
@@ -546,78 +399,76 @@ function bwdbShowSpieler( $attr ) {
 	extract( $attr );
 	$data = bwdb_get_data( $attr );
 
-
-	// echo '<h2>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . ' (Passnummer: ' . $data[0]->pnr . ')</h2>';
-	echo '<h2>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . '</h2>';
+	echo '<h2>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . ' (Passnummer: ' . $data[0]->splr_id . ')</h2>';
 
 	bwdbShowAvgList( $attr );
 
 	foreach ( $data AS $value ) {
-		$result[ $value->sktn_klss_ssn_id ]['klasse']                                  = $value->klasse;
-		$result[ $value->sktn_klss_ssn_id ]['anz_runden']                              = $value->anz_runden;
-		$result[ $value->sktn_klss_ssn_id ]['data'][ $value->runde ][ $value->nummer ] = $value->ergebnis;
+		$result[ $value->sktn_klss_ssn_id ][ klasse ]                                  = $value->klasse;
+		$result[ $value->sktn_klss_ssn_id ][ anz_runden ]                              = $value->anz_runden;
+		$result[ $value->sktn_klss_ssn_id ][ data ][ $value->runde ][ $value->nummer ] = $value->ergebnis;
 
 	}
 
-	$spalten = $value->anz_spiele; // @todo
+	$spalten = 6; // @todo
 	?>
 
-    <table id=<?php echo $attr['id']; ?> "class=" bwdb" >
-    <thead>
-    <tr>
-        <th colspan="<?php echo $spalten + 4; ?>">Ergebnis-Details</th>
-    </tr>
-    <tr>
-        <th>Bewerb</th>
-        <th>Rd</th>
-		<?php for ( $x = 1;
-		$x <= $spalten;
-		++ $x ) { ?>
-        <th>Spiel <?php echo $x;
-			} ?></th>
-        <th>Summe</th>
-        <th>Tages-<br/>schnitt</th>
-    </tr>
-    </thead>
-    <tbody>
-	<?php
+	<table id="bwdb" "class="bwdb" >
+		<thead>
+		<tr>
+			<th colspan="<?php echo $spalten + 4; ?>">Ergebnis-Details</th>
+		</tr>
+		<tr>
+			<th>Bewerb</th>
+			<th>Rd</th>
+			<?php for ( $x = 1;
+			$x <= $spalten;
+			++ $x ) { ?>
+			<th>Spiel <?php echo $x;
+				} ?></th>
+			<th>Summe</th>
+			<th>Tages-<br/>schnitt</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php
 
-	foreach ( $result as $sktn_klss_ssn_id => $sktn_klss_ssn ) {
+		foreach ( $result as $sktn_klss_ssn_id => $sktn_klss_ssn ) {
 
-		for ( $i = 1; $i <= $sktn_klss_ssn['anz_runden']; ++ $i ) {
+			for ( $i = 1; $i <= $sktn_klss_ssn[ anz_runden ]; ++ $i ) {
 
-			if ( $sktn_klss_ssn['data'][ $i ] != 0 ) {
-				?>
-                <tr>
-                <td align="left"><?php echo $sktn_klss_ssn['klasse']; ?></td>
-                <td align="right"><?php echo $i; ?>:</td>
-				<?php
-				$summe = 0;
-				$anz   = 0;
-				for ( $n = 1; $n <= $spalten; ++ $n ) {
-					$ergebnis = $sktn_klss_ssn['data'][ $i ][ $n ];
-					$summe    += $ergebnis;
+				if ( $sktn_klss_ssn[ data ][ $i ] != 0 ) {
 					?>
-                    <td align="right"><?php if ( $ergebnis != 0 ) {
-							echo $ergebnis;
-							++ $anz;
-						} else {
-							echo "---";
-						} ?></td>
+					<tr>
+					<td align="left"><?php echo $sktn_klss_ssn[ klasse ]; ?></td>
+					<td align="right"><?php echo $i; ?>:</td>
+					<?php
+					$summe = 0;
+					$anz   = 0;
+					for ( $n = 1; $n <= $spalten; ++ $n ) {
+						$ergebnis = $sktn_klss_ssn[ data ][ $i ][ $n ];
+						$summe += $ergebnis;
+						?>
+						<td align="right"><?php if ( $ergebnis != 0 ) {
+								echo $ergebnis;
+								++ $anz;
+							} else {
+								echo "---";
+							} ?></td>
+						<?php
+					}
+					?>
+					<td align="right"><?php echo $summe; ?></td>
+					<td align="right"><?php echo sprintf( "%3.3f", round( $summe / $anz, 3 ) ); ?></td>
 					<?php
 				}
 				?>
-                <td align="right"><?php echo $summe; ?></td>
-                <td align="right"><?php echo sprintf( "%3.3f", round( $summe / $anz, 3 ) ); ?></td>
+				</tr>
 				<?php
 			}
-			?>
-            </tr>
-			<?php
-		}
-	} ?>
-    </tbody>
-    </table>
+		} ?>
+		</tbody>
+	</table>
 	<?php
 }
 
@@ -626,59 +477,55 @@ function bwdbShowSpieler( $attr ) {
 /* 			Funktion VEREIN     			 */
 /*********************************************/
 /*
-erwartet vrn_id, klss_id und ssn_id (filter)-> Anzeige der passenden Daten der Saison über sktn_klss_ssn
+erwartet vrn_id, klss_id und ssn_id (filter)-> Anzeige der passenden Daten der Saison über sktn_klss_ssn 
 
 */
 function bwdbShowVerein( $attr ) {
-	// $attr['min'] = 1;
-
-	$sktn_vrn = bwdb_get_data( array(
-		'output' => 'sktn_klss_ssn',
-		'vrn_id' => $attr['vrn_id'],
-		'ssn_id' => $attr['ssn_id']
-	) );
+	$attr['min'] = 1;
 
 	echo '<h2>Verein: ' . $sktn_vrn[0]->verein . '</h2>';
 
 	bwdbShowAvgList( $attr );
-
-	// $attr['min'] = '0'; // ToDo: Implement!
-	bwdbShowSktnList( $attr );
 	?>
 
-    <!--    <table>
-        <thead>
-        <tr>
-            <th>Sektionsname:</th>
-            <th>Spielklasse:</th>
-        </tr>
-        </thead>
-        <tbody>
+	<table>
+		<thead>
+		<tr>
+			<th>Sektionsname:</th>
+			<th>Spielklasse:</th>
+		</tr>
+		</thead>
+		<tbody>
 
 		<?php
-	/*
-			foreach ( $sktn_vrn AS $sktn_vrn ) {
-				*/ ?>
-            <tr>
-                <td align="left">    <?php
-	/*					$link           = $_SERVER['REQUEST']; //reset
-						$link           = add_query_arg( array(
-							'show'    => 'sktn_klss_ssn',
-							'sktn_id' => $sktn_vrn->sktn_id,
-							'ssn_id'  => $attr['ssn_id']
-						), $link );
-						$asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-							$link,
-							$sktn_vrn->sktn_klss_ssn_id,
-							$sktn_vrn->sektion );
-						echo $asktn_klss_ssn; */ ?></td>
-                <td align="left"><?php /*echo $sktn_vrn->klasse; */ ?></td>
-            </tr>
+		$sktn_vrn = bwdb_get_data( array(
+			'output' => 'sktn_klss_ssn',
+			'vrn_id' => $attr[ vrn_id ],
+			'ssn_id' => $attr[ ssn_id ]
+		) );
+
+		foreach ( $sktn_vrn AS $sktn_vrn ) {
+			?>
+			<tr>
+				<td align="left">    <?php
+					$link           = $_SERVER['REQUEST']; //reset
+					$link           = add_query_arg( array(
+						'show'    => 'sktn_klss_ssn',
+						'sktn_id' => $sktn_vrn->sktn_id,
+						'ssn_id'  => $attr['ssn_id']
+					), $link );
+					$asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+						$link,
+						$sktn_vrn->sktn_klss_ssn_id,
+						$sktn_vrn->sektion );
+					echo $asktn_klss_ssn; ?></td>
+				<td align="left"><?php echo $sktn_vrn->klasse; ?></td>
+			</tr>
 			<?php
-	/*		}
-			*/ ?>
-        </tbody>
-    </table>-->
+		}
+		?>
+		</tbody>
+	</table>
 
 	<?php
 }
@@ -699,56 +546,56 @@ function bwdbShowSektion( $attr ) {
 	bwdbShowAvgList( $attr );
 
 	foreach ( $data AS $value ) {
-		$result[ $value->runde ]['date'] = $value->date;
+		$result[ $value->runde ][ date ] = $value->date;
 		if ( 1 == $value->reserve ) {
-			$result_res[ $value->runde ]['spieler'][ $value->splr_id ]['name']           = $value->vorname . ' ' . $value->nachname;
-			$result_res[ $value->runde ]['spieler'][ $value->splr_id ][ $value->nummer ] = $value->ergebnis;
+			$result_res[ $value->runde ][ spieler ][ $value->splr_id ][ name ]           = $value->vorname . ' ' . $value->nachname;
+			$result_res[ $value->runde ][ spieler ][ $value->splr_id ][ $value->nummer ] = $value->ergebnis;
 		} else {
-			$result[ $value->runde ]['spieler'][ $value->splr_id ]['name']           = $value->vorname . ' ' . $value->nachname;
-			$result[ $value->runde ]['spieler'][ $value->splr_id ][ $value->nummer ] = $value->ergebnis;
+			$result[ $value->runde ][ spieler ][ $value->splr_id ][ name ]           = $value->vorname . ' ' . $value->nachname;
+			$result[ $value->runde ][ spieler ][ $value->splr_id ][ $value->nummer ] = $value->ergebnis;
 		}
 	}
 
 	?>
 
-    <h2> Ergebnis-Details</h2>
+	<h2> Ergebnis-Details</h2>
 
 	<?php
 	foreach ( $result as $nr => $runde ) {
 		?>
-        <table id=<?php echo $attr['id']; ?> class="bwdb" >
-        <tbody>
-        <tr>
-            <td>Runde: <?php echo $nr; ?></td>
-            <td colspan="<?php echo $data[0]->anz_spiele + 2; ?>">Datum: <?php echo $runde['date']; ?></td>
-        </tr>
-        <tr>
-            <th>Spieler</th>
+		<table "class="bwdb" >
+		<tbody>
+		<tr>
+			<td>Runde: <?php echo $nr; ?></td>
+			<td colspan="<?php echo $data[0]->anz_spiele + 2; ?>">Datum: <?php echo $runde[ date ]; ?></td>
+		</tr>
+		<tr>
+			<th>Spieler</th>
 			<?php for ( $x = 1;
 			$x <= $data[0]->anz_spiele;
 			++ $x ) { ?>
-            <th>Spiel <?php echo $x;
+			<th>Spiel <?php echo $x;
 				} ?></th>
-            <th>Summe</th>
-            <th>Tages-<br/>schnitt</th>
-        </tr>
+			<th>Summe</th>
+			<th>Tages-<br/>schnitt</th>
+		</tr>
 		<?php
 		$summe_gesamt           = 0;
 		$spiele                 = 0;
 		$summe_spiel_ergebnisse = array();
 		foreach ( $runde[ spieler ] as $splr_id => $spieler ) {
 			?>
-            <tr>
-                <td><?php echo $spieler[ name ]; ?></td>
+			<tr>
+				<td><?php echo $spieler[ name ]; ?></td>
 				<?php
 				$anz                      = 0;
 				$summe_spieler_ergebnisse = 0;
 				for ( $n = 1; $n <= $data[0]->anz_spiele; ++ $n ) {
-					$ergebnis                     = $spieler[ $n ];
-					$summe_spieler_ergebnisse     += $ergebnis; //aufsummieren der Spiele pro Spieler
+					$ergebnis = $spieler[ $n ];
+					$summe_spieler_ergebnisse += $ergebnis; //aufsummieren der Spiele pro Spieler
 					$summe_spiel_ergebnisse[ $n ] += $ergebnis; //aufsummieren der Spiele pro Spielrunde
 					?>
-                    <td align="right"><?php if ( $ergebnis != 0 ) {
+					<td align="right"><?php if ( $ergebnis != 0 ) {
 							echo $ergebnis;
 							++ $spiele;
 							++ $anz;
@@ -759,39 +606,39 @@ function bwdbShowSektion( $attr ) {
 				}
 				$summe_gesamt += $summe_spieler_ergebnisse; // Gesamtsumme ermitteln
 				?>
-                <td align="right"><?php echo $summe_spieler_ergebnisse; ?></td>
-                <td align="right"><?php echo sprintf( "%3.3f", round( $summe_spieler_ergebnisse / $anz, 3 ) ); ?></td>
-            </tr>
+				<td align="right"><?php echo $summe_spieler_ergebnisse; ?></td>
+				<td align="right"><?php echo sprintf( "%3.3f", round( $summe_spieler_ergebnisse / $anz, 3 ) ); ?></td>
+			</tr>
 			<?php
 		}
 		?>
-        <tr>
-            <td>Mannschaftsergebnis:</td>
+		<tr>
+			<td>Mannschaftsergebnis:</td>
 			<?php foreach ( $summe_spiel_ergebnisse as $summe_spiel_ergebnis ) {
 				echo '<td align="right">' . $summe_spiel_ergebnis . '</td>';
 			} ?>
-            <td align="right"><?php echo $summe_gesamt; ?></td>
-            <td align="right"><?php echo sprintf( "%3.3f", round( $summe_gesamt / $spiele, 3 ) ); ?></td>
-        </tr>
+			<td align="right"><?php echo $summe_gesamt; ?></td>
+			<td align="right"><?php echo sprintf( "%3.3f", round( $summe_gesamt / $spiele, 3 ) ); ?></td>
+		</tr>
 
 		<?php if ( ! empty( $result_res[ $nr ] ) ) {
 			?>
-            <tr>
-                <td>Reserve:</td>
-            </tr>
+			<tr>
+				<td>Reserve:</td>
+			</tr>
 			<?php
 			foreach ( $result_res[ $nr ][ spieler ] as $splr_id => $spieler ) {
 				?>
-                <tr>
-                    <td><?php echo $spieler[ name ]; ?></td>
+				<tr>
+					<td><?php echo $spieler[ name ]; ?></td>
 					<?php
 					$summe = 0;
 					$anz   = 0;
 					for ( $n = 1; $n <= $data[0]->anz_spiele; ++ $n ) {
 						$ergebnis = $spieler[ $n ];
-						$summe    += $ergebnis;
+						$summe += $ergebnis;
 						?>
-                        <td align="right"><?php if ( $ergebnis != 0 ) {
+						<td align="right"><?php if ( $ergebnis != 0 ) {
 								echo $ergebnis;
 								++ $anz;
 							} else {
@@ -800,17 +647,17 @@ function bwdbShowSektion( $attr ) {
 						<?php
 					}
 					?>
-                    <td align="right"><?php echo $summe; ?></td>
-                    <td align="right"><?php echo sprintf( "%3.3f", round( $summe / $anz, 3 ) ); ?></td>
-                </tr>
+					<td align="right"><?php echo $summe; ?></td>
+					<td align="right"><?php echo sprintf( "%3.3f", round( $summe / $anz, 3 ) ); ?></td>
+				</tr>
 				<?php
 			}
 		}
 
 
 	} ?>
-    </tbody>
-    </table>
+	</tbody>
+	</table>
 
 	<?php
 }
@@ -821,7 +668,6 @@ function bwdbShowSektion( $attr ) {
 /*********************************************/
 function bwdb_get_data( $attr ) {
 
-	// wp_die( '<pre>' . $attr  . '</pre>' );
 	//NB Always set wpdb globally!
 	global $wpdb;
 
@@ -837,12 +683,7 @@ function bwdb_get_data( $attr ) {
 //	$orderby = $attr[orderby];
 //	$groupby = $attr[groupby];
 
-	// @todo - Standardwerte setzten oder überprüfen bevor ins array eingetragen wird ...
-	$sex     = '';
-	$reserve = '';
-	$output  = '';
-	$limit   = '';
-
+	// @todo - Standardwerte setzten oder überprüfen beovr ins array eingetragen wird ...
 	extract( $attr );
 
 	// Überprüfen ...
@@ -889,42 +730,40 @@ function bwdb_get_data( $attr ) {
 	// WHERE Abfrage basteln 1=1 damit man sich über AND keine Gedanken machen muß ;)
 	// @todo is_numeric
 
-	$where = '';
-
 	if ( ! empty( $bwrb_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN ($bwrb_id)";
+		$where .= " AND b.bwrb_id IN ($bwrb_id)";
 	}
 	if ( ! empty( $klss_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.ID IN ($klss_id)";
+		$where .= " AND k.klss_id IN ($klss_id)";
 	}
 	if ( ! empty( $klss_ssn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.ID IN ($klss_ssn_id)";
+		$where .= " AND k.klss_ssn_id IN ($klss_ssn_id)";
 	}
 	if ( ! empty( $sktn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_sktn.ID IN ($sktn_id)";
+		$where .= " AND s.sktn_id IN ($sktn_id)";
 	}
 	if ( ! empty( $sktn_klss_ssn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.ID IN ($sktn_klss_ssn_id)";
+		$where .= " AND s.sktn_klss_ssn_id IN ($sktn_klss_ssn_id)";
 	}
 	if ( ! empty( $ssn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID IN ($ssn_id)";
+		$where .= " AND k.ssn_id IN ($ssn_id)";
 	}
 	if ( ! empty( $vrn_id ) ) {
-		$where .= " AND rel_splr.rel_vrn.ID IN ($vrn_id)";
+		$where .= " AND v.vrn_id IN ($vrn_id)";
 	}
 	if ( ! empty( $splr_id ) ) {
-		$where .= " AND rel_splr.ID IN ($splr_id)";
+		$where .= " AND p.splr_id IN ($splr_id)";
 	}
 	if ( ! empty( $spl_id ) ) {
-		$where .= " AND t.ID IN ($spl_id)";
+		$where .= " AND spl_id IN ($spl_id)";
 	}
 	if ( ! empty( $min ) ) {
 		// @TODO - derzeit wird nur nach 0 oder mehr als 0 unterschieden ;)
-		// $where .= " AND t.ID IS NOT NULL";
+		$where .= " AND spl_id IS NOT NULL";
 	}
 
 	if ( is_numeric( $sex ) ) {
-		$where .= "  AND rel_splr.geschlecht.meta_value = ($sex)";
+		$where .= "  AND sex = $sex";
 	}
 	if ( is_numeric( $reserve ) ) {
 		$where .= "  AND reserve = $reserve";
@@ -932,7 +771,6 @@ function bwdb_get_data( $attr ) {
 
 
 	// If a search pattern is specified, load the posts that match
-	$search = '';
 	if ( ! empty( $attr['s'] ) ) {
 		// added slashes screw with quote grouping when done early, so done later
 		$attr['s'] = stripslashes( $attr['s'] );
@@ -947,7 +785,7 @@ function bwdb_get_data( $attr ) {
 		foreach ( (array) $attr['search_terms'] as $term ) {
 			$term = esc_sql( like_escape( $term ) );
 			// example $search .= "{$searchand}((s.sktn_klss_ssn_id LIKE '{$n}{$term}{$n}') OR (p.splr_id LIKE '{$n}{$term}{$n}'))";
-			$search    .= "{$searchand}((p.nachname LIKE '{$n}{$term}{$n}') OR  (p.vorname LIKE '{$n}{$term}{$n}') OR (p.splr_id LIKE '{$n}{$term}{$n}'))";
+			$search .= "{$searchand}((p.nachname LIKE '{$n}{$term}{$n}') OR  (p.vorname LIKE '{$n}{$term}{$n}') OR (p.splr_id LIKE '{$n}{$term}{$n}'))";
 			$searchand = ' AND ';
 		}
 
@@ -963,8 +801,8 @@ function bwdb_get_data( $attr ) {
 
 	// siehe query.php ^^ nach Jahr und Monat suchen
 	if ( ! empty( $attr['m'] ) ) {
-		$where .= " AND YEAR(rel_spl.date)=" . substr( $attr['m'], 0, 4 );
-		$where .= " AND MONTH(rel_spl.date)=" . substr( $attr['m'], 4, 2 );
+		$where .= " AND YEAR(g.date)=" . substr( $attr['m'], 0, 4 );
+		$where .= " AND MONTH(g.date)=" . substr( $attr['m'], 4, 2 );
 	}
 
 
@@ -985,96 +823,139 @@ function bwdb_get_data( $attr ) {
 		$limits = 'LIMIT ' . $pgstrt . $attr['posts_per_page'];
 	}
 
+
 	$found_rows = '';
 	if ( ! $attr['no_found_rows'] && ! empty( $limits ) ) {
 		$found_rows = 'SQL_CALC_FOUND_ROWS';
 	}
 
 
-	$fields = "	    rel_splr.ID as splr_id,
-					rel_splr.post_title as nachname,
-					rel_splr.rel_vrn.post_title as verein,
-					rel_splr.rel_vrn.ID as vrn_id,
-					d.runde,
-					d.datum as date,
-					t.ID as spl_id,
-					d.nummer as nummer,
-					rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-					rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
-					rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
-					rel_sktn_klss_ssn.rel_klss_ssn.ID as klss_ssn_id,
-					rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID as ssn_id,
-					rel_sktn_klss_ssn.rel_klss_ssn.spiele.meta_value as anz_spiele,
-					rel_sktn_klss_ssn.rel_klss_ssn.runden.meta_value as anz_runden,
-					rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
-					rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
-					rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-					d.reserve,
-					rel_splr.geschlecht.meta_value as sex,
-					d.ergebnis,
+//  nicht mehr Notwendig -> aufheben ? 	
+//	$lastkey = array_pop(array_keys($whereA));
+//	foreach  ( $whereA as $key => $value ) {
+//		$where .= $value;
+//		if ($key != $lastkey) $where .= " AND ";
+//	}
+
+
+	// Daten auslesen .. $distinct , $fields …. noch anpassen//erstellen
+	// @ToDo: !!!!
+
+
+	$fields .= "	p.splr_id,
+					p.vorname,
+					p.nachname,
+					v.name as verein,
+					v.vrn_id,
+					g.runde,
+					g.date,
+					g.spl_id,
+					g.nummer,
+					z.sktn_klss_ssn_id,
+					sn.name as sektion,
+					sn.sktn_id,
+					k.klss_ssn_id,
+					k.ssn_id,
+					k.anz_spiele,
+					k.anz_runden,
+					kn.name as klasse,
+					sa.name as saison,
+					g.reserve,
+					p.sex,
+					g.ergebnis,
 					";
 
 
 	// Achtung Verein wird über Spieler ermittelt = aktueller Verein = fail fall sich der Verein ändert .. korriegieren Verein über sektion des Spiels ermitteln ...
-	$pod_name = 'spl';
-
+	$join .= "	FROM $wpdb->spieler AS p
+				LEFT JOIN $wpdb->splr_sktn_klss_ssn AS z ON z.splr_id = p.splr_id
+				LEFT JOIN $wpdb->spiel AS g ON p.splr_id = g.splr_id AND z.sktn_klss_ssn_id = g.sktn_klss_ssn_id
+				LEFT JOIN $wpdb->verein AS v ON v.vrn_id = p.vrn_id
+				LEFT JOIN $wpdb->sktn_klss_ssn AS s ON s.sktn_klss_ssn_id = z.sktn_klss_ssn_id
+				LEFT JOIN $wpdb->sektion AS sn ON sn.sktn_id = s.sktn_id
+				LEFT JOIN $wpdb->klss_ssn AS k ON k.klss_ssn_id = s.klss_ssn_id
+				LEFT JOIN $wpdb->klasse AS kn ON kn.klss_id = k.klss_id
+				LEFT JOIN $wpdb->saison AS sa ON sa.ssn_id = k.ssn_id
+				LEFT JOIN $wpdb->bewerb AS b ON b.bwrb_id = kn.bwrb_id";
 
 	// für Schnitt Berechnung
 	if ( ! empty( $attr['single'] ) ) {
 
-		$calculations = "	    SUM(ergebnis) AS pins,
-								MAX(ergebnis) AS hsp,
-								MIN(ergebnis) AS minspl,
-								(MAX(ergebnis)-MIN(ergebnis)) AS diffspl,
-								COUNT(ergebnis) AS anzahl,
-								COUNT( CASE WHEN rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN (121775) THEN ergebnis END) AS anz_allevent,
-								ROUND(AVG(ergebnis),3) AS schnitt,
-								ROUND(((MAX(ergebnis)/AVG(ergebnis)*100)-100),2) AS avgmaxspl,
-								ROUND(((MIN(ergebnis)/AVG(ergebnis)*100)-100),2) AS avgminspl,
-								calc.hser AS hser,
+		// todo Herausfidne warum die Abfrage in der DB geht über WP aber nicht ...
+		$jointodo .= "
+					INNER JOIN 
+					(SELECT
+							h.splr_id,
+							MAX(h.hser) AS maxser
+
+							FROM
+									(SELECT   g.splr_id AS splr_id,
+									SUM(g.ergebnis) AS hser
+									FROM wp_bwdb_spiel AS g
+									LEFT JOIN wp_bwdb_sktn_klss_ssn AS s ON s.sktn_klss_ssn_id = g.sktn_klss_ssn_id
+									LEFT JOIN wp_bwdb_klss_ssn AS k ON k.klss_ssn_id = s.klss_ssn_id
+									LEFT JOIN wp_bwdb_saison AS sa ON k.ssn_id = sa.ssn_id
+									LEFT JOIN wp_bwdb_klasse AS kn ON kn.klss_id = k.klss_id
+									WHERE sa.ssn_id = 1 AND kn.bwrb_id = 1
+									GROUP BY k.klss_id, g.runde, g.splr_id) AS h
+
+							GROUP BY h.splr_id
+					  ) AS tbl_maxser ON tbl_maxser.splr_id = p.splr_id";
+
+		// tbl_maxser.maxser AS hser,  sobald oben funktioniert ;)
+		$calculations .= "	SUM(g.ergebnis) AS pins,
+								MAX(g.ergebnis) AS maxspl,
+								MIN(g.ergebnis) AS minspl,
+								(MAX(g.ergebnis)-MIN(g.ergebnis)) AS diffspl,
+								COUNT(g.ergebnis) AS anzahl,
+								COUNT( CASE WHEN  b.bwrb_id IN (1) THEN g.ergebnis END) AS anz_allevent,
+								ROUND(AVG(g.ergebnis),3) AS schnitt,
+								ROUND(((MAX(g.ergebnis)/AVG(g.ergebnis)*100)-100),2) AS avgmaxspl,
+								ROUND(((MIN(g.ergebnis)/AVG(g.ergebnis)*100)-100),2) AS avgminspl,
 								";
 
-		$join = "   INNER JOIN (    SELECT h.splr_id, MAX(h.ser) as hser
-                                    FROM (  SELECT `rel_splr`.`ID` as splr_id, SUM(d.ergebnis) AS ser
-                                            FROM `bewp_posts` AS `t`
-                                            LEFT JOIN `bewp_podsrel` AS `rel_rel_splr` ON `rel_rel_splr`.`field_id` = 121826 AND `rel_rel_splr`.`item_id` = `t`.`ID`
-                                            LEFT JOIN `bewp_posts` AS `rel_splr` ON `rel_splr`.`ID` = `rel_rel_splr`.`related_item_id`
-                                            LEFT JOIN `bewp_pods_spl` AS `d` ON `d`.`id` = `t`.`ID`
-                                            WHERE ( ( `t`.`post_status` IN ( 'publish' ) ) AND ( `t`.`post_type` = 'spl' ) )
-                                            GROUP BY splr_id , runde
-                                            ORDER BY `t`.`menu_order`, `t`.`post_title`, `t`.`post_date`) AS h
-                                    GROUP BY h.splr_id) AS calc ON calc.splr_id = rel_splr.ID ";
-
-		$groupby = 'splr_id';
+		$groupby = 'p.splr_id';
 	}
 
 	if ( ! empty( $attr['team'] ) ) {
-
-
-		$sub_where = "reserve = 0";
-		if ( ! empty( $runde ) ) {
-			$sub_where .= " AND runde IN ($runde)";
-		}
-
-		$calculations = "		SUM(ergebnis) AS pins,
-								COUNT(ergebnis) AS anzahl,
-								ROUND(SUM(ergebnis)/COUNT(ergebnis),3) AS schnitt,
-								MAX(calc.hspl) AS hsp,
-								MAX(calc.serie) AS hser,
-								";
-
-		$join = '   INNER JOIN (    SELECT h.*, MAX(h.spl) as hspl, SUM(spl) as serie
-                                    FROM (  SELECT `rel_sktn_klss_ssn`.`ID` as sktn_klss_ssn_id, runde, SUM(ergebnis) AS spl, nummer
-                                            FROM `bewp_posts` AS `t`
-                                            LEFT JOIN `bewp_podsrel` AS `rel_rel_sktn_klss_ssn` ON `rel_rel_sktn_klss_ssn`.`field_id` = 122016 AND `rel_rel_sktn_klss_ssn`.`item_id` = `t`.`ID` 
-                                            LEFT JOIN `bewp_posts` AS `rel_sktn_klss_ssn` ON `rel_sktn_klss_ssn`.`ID` = `rel_rel_sktn_klss_ssn`.`related_item_id` 
-                                            LEFT JOIN `bewp_pods_spl` AS `d` ON `d`.`id` = `t`.`ID` 
-                                            WHERE ( ( ' . $sub_where . ' AND `t`.`post_status` IN ( "publish" ) ) AND ( `t`.`post_type` = "spl" ) )
-                                            GROUP BY runde, nummer, sktn_klss_ssn_id
-                                            ORDER BY `t`.`menu_order`, `t`.`post_title`, `t`.`post_date`) AS h
-                                    GROUP BY h.sktn_klss_ssn_id, runde) AS calc ON calc.sktn_klss_ssn_id = `rel_sktn_klss_ssn`.`ID` AND calc.runde = d.runde';
-
-		$groupby = 'sktn_klss_ssn_id';
+		$calculations .= "			SUM(g.ergebnis) AS pins,
+										COUNT(g.ergebnis) AS anzahl,
+										ROUND(SUM(g.ergebnis)/COUNT(g.ergebnis),3) AS schnitt,
+										tbl_hsp.maxsp AS hsp,
+										tbl_hser.maxser AS hser,
+										s.klss_ssn_id,
+										s.sktn_klss_ssn_id,";
+		$join .= "			INNER JOIN
+								(SELECT
+									h.hid,
+									MAX(h.pins) AS maxsp
+									FROM	(SELECT
+												s.sktn_klss_ssn_id AS hid,
+												g.nummer AS nr,
+												SUM(g.ergebnis) AS pins
+												FROM $wpdb->sktn_klss_ssn AS s
+												LEFT JOIN $wpdb->sektion AS sn ON sn.sktn_id = s.sktn_id
+												INNER JOIN $wpdb->spiel AS g ON g.sktn_klss_ssn_id = s.sktn_klss_ssn_id
+												WHERE reserve = 0
+												GROUP BY g.runde,g.nummer,s.sktn_klss_ssn_id
+												ORDER BY s.sktn_klss_ssn_id DESC) AS h
+									GROUP BY h.hid) AS tbl_hsp ON tbl_hsp.hid = s.sktn_klss_ssn_id
+							INNER JOIN  
+									(SELECT
+										h.hid,
+										MAX(h.pins) AS maxser
+										FROM	(SELECT
+													s.sktn_klss_ssn_id AS hid,
+													g.runde AS rd,
+													SUM(g.ergebnis) AS pins
+													FROM $wpdb->sktn_klss_ssn AS s
+													LEFT JOIN $wpdb->sektion AS sn ON sn.sktn_id = s.sktn_id
+													INNER JOIN $wpdb->spiel AS g ON g.sktn_klss_ssn_id = s.sktn_klss_ssn_id
+													WHERE reserve = 0
+													GROUP BY g.runde,s.sktn_klss_ssn_id
+													ORDER BY s.sktn_klss_ssn_id DESC) AS h
+										GROUP BY h.hid) AS tbl_hser ON tbl_hser.hid = s.sktn_klss_ssn_id";
+		$groupby = 'g.sktn_klss_ssn_id';
 	}
 
 
@@ -1082,380 +963,103 @@ function bwdb_get_data( $attr ) {
 	switch ( $output ) {
 
 		case 'bewerb':
-			$pod_name = 'FROM ' . $wpdb->$output . ' AS b';
-			$fields   = '*, b.name as bewerb,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
+			$join   = 'FROM ' . $wpdb->$output . ' AS b';
+			$fields = '*, b.name as bewerb,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
 			// $orderby = $output.'.name';
 			break;
 
 		case 'saison':
-			$pod_name = 'ssn';
-			$fields   = 't.post_title as saison, ID as ssn_id, beginndatum.meta_value as beginndatum, endedatum.meta_value as endedatum,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
-			$orderby  = '';
-
+			$join   = 'FROM ' . $wpdb->$output . ' AS sa';
+			$fields = '*, sa.name as saison,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
+			// $orderby = $output.'.name';
 			break;
 
 		case 'verein':
-			$pod_name = 'vrn';
-			$fields   = 't.*, t.post_title as verein, t.ID as vrn_id,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
-			$orderby  = 't.ID';
-			break;
-
-		case 'vrn_ssn':
-			$groupby = 'vrn_id';
-			// $orderby  = '';
-			// $where = '';
+			$join   = 'FROM ' . $wpdb->$output . ' AS v';
+			$fields = '*, v.name as verein,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
+			// $orderby = $output.'.name';
 			break;
 
 		case 'sektion':
-			$pod_name = 'FROM ' . $wpdb->$output . ' AS s';
-			$fields   = 't.*, s.name as sektion,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
+			$join   = 'FROM ' . $wpdb->$output . ' AS s';
+			$fields = '*, s.name as sektion,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
 			// $orderby = $output.'.name';
 			break;
 
 		case 'klasse':
-			$pod_name = 'klss';
-			$fields   = 't.ID as klss_id, post_title as klasse,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
-			// maybe add bwrb_id
+			$join   = 'FROM ' . $wpdb->$output . ' AS k';
+			$fields = '*, k.name as klasse,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
 			// $orderby = $output.'.name';
-
-			if ( ! empty( $klss_id ) ) {
-				$where = "AND t.ID IN ($klss_id)";
-			}
-			// $where = '';
 			break;
 
 		case 'klss_ssn':
-			$pod_name = 'FROM ' . $wpdb->$output . ' AS k
+			$join   = 'FROM ' . $wpdb->$output . ' AS k
 					LEFT JOIN ' . $wpdb->klasse . ' AS kn ON kn.klss_id = k.klss_id
 					LEFT JOIN ' . $wpdb->saison . ' AS sa ON sa.ssn_id = k.ssn_id
 					LEFT JOIN ' . $wpdb->bewerb . ' AS b ON b.bwrb_id = kn.bwrb_id';
-			$fields   = '*, kn.name as klasse, 
-			            sa.name as saison, 
-			            b.name as bewerb,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
+			$fields = '*, kn.name as klasse, sa.name as saison, b.name as bewerb,'; // "$output.$col, $output.name"; optimieren ? -> $col war die übergebenen spalte ….
 			// $orderby = $output.'.name';
 			break;
 
 		case 'sktn_klss_ssn':
-			$pod_name = 'sktn_klss_ssn'; // zur ermittlung der Mitgliederanzahl
-			$fields   = "    *,
-			                rel_sktn.ID as sktn_id,
-			                t.ID as sktn_klss_ssn_id, 
-			                rel_sktn.post_title AS sektion,
-			                rel_sktn.rel_vrn.post_title AS verein, 
-			                rel_klss_ssn.rel_klss.post_title AS klasse, 
-			                rel_klss_ssn.rel_ssn.post_title as saison, 
-			                rel_klss_ssn.rel_klss.rel_bwrb.post_title as bewerb, 
-			                0 AS anzahl,";
-			$groupby  = "sktn_klss_ssn_id";
-			$where    = '';
-			if ( ! empty( $ssn_id ) ) {
-				$where .= " AND rel_klss_ssn.rel_ssn.ID IN ($ssn_id)";
-			}
-			if ( ! empty( $vrn_id ) ) {
-				$where .= " AND rel_sktn.rel_vrn.ID IN ($vrn_id)";
-			}
+			$join = "FROM $wpdb->sektion AS sn
+					LEFT JOIN $wpdb->sktn_klss_ssn AS s ON s.sktn_id = sn.sktn_id
+					INNER JOIN $wpdb->verein AS v ON v.vrn_id = sn.vrn_id
+					INNER JOIN $wpdb->klss_ssn AS k ON k.klss_ssn_id = s.klss_ssn_id
+					LEFT JOIN $wpdb->klasse AS kn ON kn.klss_id = k.klss_id
+					LEFT JOIN $wpdb->saison AS sa ON sa.ssn_id = k.ssn_id
+					LEFT JOIN $wpdb->bewerb AS b ON b.bwrb_id = kn.bwrb_id
+					LEFT JOIN $wpdb->splr_sktn_klss_ssn AS z ON z.sktn_klss_ssn_id = s.sktn_klss_ssn_id"; // zur ermittlung der Mitgliederanzahl
+
+
+			$fields  = "*, s.sktn_klss_ssn_id, sn.name AS sektion, v.name AS verein, kn.name AS klasse, sa.name as saison, b.name as bewerb, COUNT(splr_id) AS anzahl,";
+			$groupby = "s.sktn_klss_ssn_id";
 			// $orderby = '';
 			break;
 
 		case 'spieler':
-			$pod_name = 'splr';
-			$fields   = "p.splr_id,
-			            p.vrn_id,s.sktn_klss_ssn_id,k.klss_ssn_id,p.vorname,p.nachname,p.sex,v.name AS verein,sn.name AS sktn_klss_ssn, kn.name AS klss_ssn,";
-			break;
-
-		case 'best_off_hspl': // add off to activate ;)  MAX(IF(meta.meta_key = 'nickname', meta.meta_value, NULL)) AS 'nickname',
-
-			$pod_name = 'splr';
-
-			$fields = ' t.post_title as post_title,
-                concat(t.post_title, " | ",rel_sktn_klss_ssn.rel_sktn.post_title) as nachname,
-                t.ID as splr_id,
-                geschlecht.meta_value as sex,
-                rel_vrn.post_title as verein,
-                rel_vrn.ID as vrn_id,
-                rel_spl.d.runde,
-                rel_spl.d.datum as date,
-                rel_spl.ID as spl_id,
-                rel_spl.d.nummer as nummer,
-                rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-                rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
-                rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.ID as klss_ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID as ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.spiele.meta_value as anz_spiele,
-                rel_sktn_klss_ssn.rel_klss_ssn.runden.meta_value as anz_runden,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-                rel_spl.d.reserve,
-                rel_spl.d.ergebnis,';
-
-
-			if ( ! empty( $attr['single'] ) ) {
-
-				$calculations = "0 AS pins,
-                                ergebnis AS hsp,
-                                0 AS minspl,
-                                0 AS diffspl,
-                                0 AS anzahl,
-                                20 AS anz_allevent,
-                                0 AS schnitt,
-                                0 AS avgmaxspl,
-                                0 AS avgminspl,
-                                0 AS hser,
-                                ";
-
-				$groupby = '';
-				$join    = '';
-				if ( is_numeric( $sex ) ) {
-					$where = "  AND geschlecht.meta_value = ($sex)";
-				}
-
-			}
-
-			if ( ! empty( $attr['team'] ) ) {
-
-				$calculations = "0 AS pins,
-                                SUM(ergebnis) AS hsp,
-                                0 AS minspl,
-                                0 AS diffspl,
-                                0 AS anzahl,
-                                20 AS anz_allevent,
-                                0 AS schnitt,
-                                0 AS avgmaxspl,
-                                0 AS avgminspl,
-                                0 AS hser,
-                                ";
-
-
-				$groupby = 'sktn_klss_ssn_id, runde, nummer';
-
-				$join = '';
-			}
-
-
-			break;
-
-		case 'best_off_hser': // add off to activate ;)  MAX(IF(meta.meta_key = 'nickname', meta.meta_value, NULL)) AS 'nickname',
-			$debug = false;
-
-			$pod_name = 'splr';
-
-			$fields = ' t.post_title as nachname,
-                concat(t.post_title, " | ",rel_sktn_klss_ssn.rel_sktn.post_title) as nachname,
-                t.ID as splr_id,
-                geschlecht.meta_value as sex,
-                rel_vrn.post_title as verein,
-                rel_vrn.ID as vrn_id,
-                rel_spl.d.runde,
-                rel_spl.d.datum as date,
-                rel_spl.ID as spl_id,
-                rel_spl.d.nummer as nummer,
-                rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-                rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
-                rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.ID as klss_ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID as ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.spiele.meta_value as anz_spiele,
-                rel_sktn_klss_ssn.rel_klss_ssn.runden.meta_value as anz_runden,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-                rel_spl.d.reserve,
-                rel_spl.d.ergebnis,';
-
-			if ( ! empty( $attr['single'] ) ) {
-
-				$calculations = "0 AS pins,
-                                0 AS hsp,
-                                0 AS minspl,
-                                0 AS diffspl,
-                                0 AS anzahl,
-                                20 AS anz_allevent,
-                                0 AS schnitt,
-                                0 AS avgmaxspl,
-                                0 AS avgminspl,
-                                SUM(ergebnis) AS hser,
-                                ";
-
-				$groupby = 'splr_id, runde';
-				$join    = '';
-				if ( is_numeric( $sex ) ) {
-					$where = "  AND geschlecht.meta_value = ($sex)";
-				}
-
-			}
-
-			if ( ! empty( $attr['team'] ) ) {
-
-				$calculations = "0 AS pins,
-                                0 AS hsp,
-                                0 AS minspl,
-                                0 AS diffspl,
-                                0 AS anzahl,
-                                20 AS anz_allevent,
-                                0 AS schnitt,
-                                0 AS avgmaxspl,
-                                0 AS avgminspl,
-                                SUM(ergebnis) AS hser,
-                                ";
-
-
-				$groupby = 'sktn_klss_ssn_id, runde';
-
-				$join = '';
-			}
-
-
+			$join   = "FROM $wpdb->spieler AS p
+					INNER JOIN $wpdb->verein AS v ON v.vrn_id = p.vrn_id
+					LEFT JOIN $wpdb->splr_sktn_klss_ssn AS z ON p.splr_id = z.splr_id
+					LEFT JOIN $wpdb->sktn_klss_ssn AS s ON s.sktn_klss_ssn_id = z.sktn_klss_ssn_id
+					LEFT JOIN $wpdb->sektion AS sn ON sn.sktn_id = s.sktn_id
+					LEFT JOIN $wpdb->klss_ssn AS k ON k.klss_ssn_id = s.klss_ssn_id
+					LEFT JOIN $wpdb->klasse AS kn ON kn.klss_id = k.klss_id";
+			$fields = "p.splr_id,p.vrn_id,s.sktn_klss_ssn_id,k.klss_ssn_id,p.vorname,p.nachname,p.sex,v.name AS verein,sn.name AS sktn_klss_ssn, kn.name AS klss_ssn,";
 			break;
 		default:
 	}
 
-	// IDEAS Best off based on splr instead of spl
-	/*				if ( ! empty( $attr['single'] ) ) {
-					$pod_name = 'splr';
+	// $result = $wpdb->get_results("SELECT $select FROM $from WHERE $where GROUP BY $table.$col ORDER BY $table.name");
 
-					$calculations = "0 AS pins,
-									ergebnis AS hsp,
-									0 AS minspl,
-									0 AS diffspl,
-									0 AS anzahl,
-									20 AS anz_allevent,
-									0 AS schnitt,
-									0 AS avgmaxspl,
-									0 AS avgminspl,
-									0 AS hser,
-									";
-
-					$fields = ' t.post_title as nachname,
-						geschlecht.meta_value as sex,nachname.meta_value as nachname,vorname.meta_value as vorname,
-						rel_vrn.post_title as verein,
-						rel_vrn.ID as vrn_id,
-						rel_spl.d.runde,
-						rel_spl.d.datum as date,
-						rel_spl.ID as spl_id,
-						rel_spl.d.nummer as nummer,
-						rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-						rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
-						rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
-						rel_sktn_klss_ssn.rel_klss_ssn.ID as klss_ssn_id,
-						rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID as ssn_id,
-						rel_sktn_klss_ssn.rel_klss_ssn.spiele.meta_value as anz_spiele,
-						rel_sktn_klss_ssn.rel_klss_ssn.runden.meta_value as anz_runden,
-						rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
-						rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
-						rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-						rel_spl.d.reserve,
-						rel_spl.d.ergebnis,
-
-					';
-					$groupby = '';
-					$join = '';
-					if ( is_numeric( $sex ) ) {
-						$where = "  AND geschlecht.meta_value = ($sex)";
-					}
-					$orderby = 'ergebnis DESC';
-
-				}*/
-
-
-	// NEW - PODS
-
-	// TEST - für Join von PODS zum Anpassen!!!
-	/*	$test = false;
-		if ( $test ) {
-			$fields = "
-						d.runde,
-						t.ID as spl_id,
-						ergebnis,
-						rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-						";
-
-
-			// Achtung Verein wird über Spieler ermittelt = aktueller Verein = fail fall sich der Verein ändert .. korriegieren Verein über sektion des Spiels ermitteln ...
-			$pod_name = 'spl';
-
-
-			// für Schnitt Berechnung
-			if ( ! empty( $attr['single'] ) ) {
-
-				$calculations = "	SUM(ergebnis) AS ser,
-
-									";
-
-				$join = "";
-
-				$groupby = 'splr_id, runde';
-			}
-
-			if ( ! empty( $attr['team'] ) ) {
-				$calculations = "	SUM(ergebnis) AS pins,
-									COUNT(ergebnis) AS anzahl,
-									ROUND(SUM(ergebnis)/COUNT(ergebnis),3) AS schnitt,
-									0 AS hser,
-									SUM(ergebnis) AS hsp,";
-				$join = "";
-
-				$groupby = 'sktn_klss_ssn_id, runde, nummer';
-			}
-			$where = '';
-		}*/
 	// Sortierung @todo
+	if ( ! empty( $groupby ) ) {
+		$groupby = 'GROUP BY ' . $groupby;
+	}
+
+	if ( ! empty( $orderby ) ) {
+		$orderby = 'ORDER BY ' . $orderby;
+	}
+
 	if ( ! empty( $where ) ) {
-		$where = ' 1=1 ' . $where;
+		$where = 'WHERE 1=1' . $where;
 	}
 
-	if ( ! is_numeric( $limit ) ) {
-		$limit = - 1;
-	}
-
-
-	$select = $found_rows . ' ' . $fields . ' ' . $calculations . ' 1+1';
-
-	// limit -1 für alle ...
-	$params = array(
-		'limit'   => $limit,
-		'select'  => $select,
-		'where'   => $where,
-		'groupby' => $groupby,
-		'orderby' => $orderby,
-		'join'    => $join,
-		'expires' => '300',
-
-	);
-
-	$pods_object = pods( $pod_name, $params );
-
-	/*	$pods_object->fetch();
-		echo $pods_object->field( 'vorname');
-		print_bwdb( $pods_object->field( 'meta_value') );*/
-
-	if ( $pods_object ) {
-		$result = $pods_object->data();
-	}
+	// @todo letzten Beistrich bei Calculations und/oder bei Fields...? Workaround derzeit 1+1 ^^ todo $from einführen ^^
+	$result = $wpdb->get_results( "SELECT $found_rows $fields $calculations 1+1 $from $join $where $groupby $orderby $limits " );
 
 	// @debug:
 	// $debug = false;
-	if ( empty( $debug ) ) {
-		$debug = false;
-	}
-
+	$debug = false;
 	if ( true == $debug && current_user_can( 'manage_options' ) ) {
-		print_bwdb( $attr, 'Attr' );
-		print_bwdb( $params, 'Params' );
-		// print_bwdb( $pod_name, 'Pod' );
 
+		print_bwdb( $attr );
 		$wpdb->print_error;
-		print_bwdb( $wpdb->last_query, 'Query' );
-
-		if ( $pods_object ) {
-			print_bwdb( array_keys( $pods_object->fields() ), 'Fields' );
-		}
-
-		print_bwdb( $result, 'Object' );
+		echo $wpdb->last_query;
+		print_bwdb( $result );
 		echo "<br /><hr />";
-		// bwdb_get_data_old( $attr );
 	}
+
 
 	return $result;
 
@@ -1467,7 +1071,7 @@ function bwdb_get_data( $attr ) {
 	 * ->splr_id        Passnummer
 	 * ->verein        Vereinsname
 	 * ->pins            Gespielte Pins Insgesamt
-	 * ->hsp        Höchstes Spiel
+	 * ->maxspl        Höchstes Spiel
 	 * ->minspl        Niedrigstes Spiel
 	 * ->diffspl        Differenz zwischen höchstem und niedrigstem Spiel
 	 * ->anzahl        Anzahl der gespielten Spiele
@@ -1478,8 +1082,9 @@ function bwdb_get_data( $attr ) {
 
 }
 
+
 // @todo verbessern ;) - welche Tabele solls sein und welche spalte = auch im Request dieselbe id !!!!
-// $where um die Abfrage zu filtern ....
+// $where um die Abfrage zu filtern .... 
 function bwdb_dropdown( $output, $col, $attr = array() ) {
 	global $wpdb;
 
@@ -1516,8 +1121,8 @@ function bwdb_dropdown( $output, $col, $attr = array() ) {
 //		print_r($result);
 	?>
 
-    <select name="<?php echo $col ?>" size="1">
-        <option<?php selected( $id, '0' ); ?> value='0'><?php _e( 'Show all' ); ?></option>
+	<select name="<?php echo $col ?>" size="1">
+		<option<?php selected( $id, '0' ); ?> value='0'><?php _e( 'Show all' ); ?></option>
 		<?php
 		foreach ( $result as $val ) {
 			if ( 'sktn_klss_ssn' == $output ) { // wenn sktn_klss_ssn -> wird die Klasse angehängt (Übersicht)
@@ -1533,7 +1138,7 @@ function bwdb_dropdown( $output, $col, $attr = array() ) {
 			);
 		}
 		?>
-    </select>
+	</select>
 	<?php
 }
 
@@ -1541,14 +1146,4 @@ function bwdb_dropdown( $output, $col, $attr = array() ) {
 function bwdb_get_sktn_klss_ssn( $attr ) {
 
 	$data = bwdb_get_data( $attr );
-}
-
-function resave_pod_items() {
-	// Create and find in one shot
-	$your_cpt = pods( 'your_cpt' )->find();
-	if ( 0 < $your_cpt->total() ) {
-		while ( $your_cpt->fetch() ) {
-			$your_cpt->save( 'your_relationship_field', $your_cpt->field( 'your_relationship_field' ) );
-		} // end of your_cpt loop
-	} // end of found your_cpt
 }
