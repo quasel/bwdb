@@ -4,7 +4,7 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class BWDB_List_Table_Sektionen extends WP_List_Table
+class BWADB_List_Table_Sektionen extends WP_List_Table
 {
     /** ************************************************************************
      * REQUIRED. Set up a constructor that references the parent constructor. We
@@ -124,7 +124,7 @@ class BWDB_List_Table_Sektionen extends WP_List_Table
 
         $attr['orderby'] = $orderby;
 
-        $this->items = bwdb_get_data($attr);
+        $this->items = bwadb_get_data($attr);
 
         $total_items = $wpdb->get_var("SELECT FOUND_ROWS()");
         $total_pages = ceil($total_items / $per_page);
@@ -149,9 +149,9 @@ class BWDB_List_Table_Sektionen extends WP_List_Table
             if ('top' == $which) {
                 //The code that goes before the table is here
                 echo '<span<>Verein: </span>';
-                bwdb_dropdown('verein', 'vrn_id');
+                bwadb_dropdown('verein', 'vrn_id');
                 echo '<span>Klasse: </span>';
-                bwdb_dropdown('klasse', 'klss_id');
+                bwadb_dropdown('klasse', 'klss_id');
                 // Notwendig ? Kopiert ...
                 do_action('restrict_manage_posts');
                 submit_button(__('Filter'), 'secondary', false, false, array('id' => 'post-query-submit'));
@@ -178,19 +178,19 @@ class BWDB_List_Table_Sektionen extends WP_List_Table
 }
 
 // now lets use it ;)
-function bwdb_list_sektionen()
+function bwadb_list_sektionen()
 {
     global $wpdb;
     //Create an instance of our package class...
-    $bwdbListTable = new BWDB_List_Table_sektionen();
-    $base = "admin.php?page=bwdb_sektionen"; //todo - besseren Weg finden ...
+    $bwadbListTable = new BWADB_List_Table_sektionen();
+    $base = "admin.php?page=bwadb_sektionen"; //todo - besseren Weg finden ...
 
-    switch ($bwdbListTable->current_action()) {
+    switch ($bwadbListTable->current_action()) {
 
         case "edit":
             //$attr['sktn_id'] = $_REQUEST['sktn_id'];
             //$attr['groupby'] = 'z.sktn_id';
-            //$data=bwdb_get_data($attr);
+            //$data=bwadb_get_data($attr);
             ?>
 
             <?php
@@ -249,7 +249,7 @@ function bwdb_list_sektionen()
 
 
     // Fetch, prepare, sort, and filter our data...
-    $bwdbListTable->prepare_items();
+    $bwadbListTable->prepare_items();
 
     ?>
     <div class="wrap nosubsub">
@@ -265,15 +265,15 @@ function bwdb_list_sektionen()
             <div id="col-right">
                 <div class="col-wrap">
                     <!-- <form class="search-form" action="" method="get">
-		<?php $bwdbListTable->search_box('search', 'sektionen'); ?>
+		<?php $bwadbListTable->search_box('search', 'sektionen'); ?>
 		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" 
 		</form> // @todo: Suche für Verein, Sektionen, etc. -->
                     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-                    <form id="bwdb-sektionen" action='' method="get">
+                    <form id="bwadb-sektionen" action='' method="get">
                         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
                         <!-- Now we can render the completed list table -->
-                        <?php $bwdbListTable->display() ?>
+                        <?php $bwadbListTable->display() ?>
                         <br class="clear"/>
                     </form>
                 </div>
@@ -301,11 +301,11 @@ function bwdb_list_sektionen()
                             </div>
                             <div class="form-field form-required">
                                 <label for="vrn_id">Verein</label>
-                                <?php bwdb_dropdown('verein', 'vrn_id'); ?>
+                                <?php bwadb_dropdown('verein', 'vrn_id'); ?>
                             </div>
                             <div class="form-field form-required">
                                 <label for="klss_id">Klasse</label>
-                                <?php bwdb_dropdown('klasse', 'klss_id'); ?>
+                                <?php bwadb_dropdown('klasse', 'klss_id'); ?>
                             </div>
                             <?php submit_button("Speichern", 'primary', 'button'); ?>
 

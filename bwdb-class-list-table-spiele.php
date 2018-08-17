@@ -4,7 +4,7 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class BWDB_List_Table_Spiele extends WP_List_Table
+class BWADB_List_Table_Spiele extends WP_List_Table
 {
     /** ************************************************************************
      * REQUIRED. Set up a constructor that references the parent constructor. We
@@ -140,7 +140,7 @@ class BWDB_List_Table_Spiele extends WP_List_Table
         $ordery .= ', runde DESC, nummer ASC';
         $attr['orderby'] = $orderby;
 
-        $this->items = bwdb_get_data($attr);
+        $this->items = bwadb_get_data($attr);
         $total_items = $wpdb->get_var("SELECT FOUND_ROWS()");
         $total_pages = ceil($total_items / $per_page);
 
@@ -165,7 +165,7 @@ class BWDB_List_Table_Spiele extends WP_List_Table
             if ('top' == $which) {
                 //The code that goes before the table is here
                 $this->months_dropdown();
-                bwdb_dropdown('sektion', 'sktn_id');
+                bwadb_dropdown('sektion', 'sktn_id');
                 // Notwendig ? Kopiert ...
                 do_action('restrict_manage_posts');
                 submit_button(__('Filter'), 'secondary', false, false, array('id' => 'post-query-submit'));
@@ -236,7 +236,7 @@ class BWDB_List_Table_Spiele extends WP_List_Table
 }
 
 // now lets use it ;)
-function bwdb_list_spiele()
+function bwadb_list_spiele()
 {
     global $wpdb;
 // 	$form_data = shortcode_atts( array(
@@ -260,7 +260,7 @@ function bwdb_list_spiele()
             <h1>Korrektur</h1>
             <?php
             $attr['spl_id'] = $_REQUEST['spl_id'];
-            $data = bwdb_get_data($attr);
+            $data = bwadb_get_data($attr);
             echo '<h3>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . ' ' . $data[0]->sektion . '<br /> Runde: ' . $data[0]->runde . ' Spiel: ' . $data[0]->nummer . ' Datum: ' . $data[0]->date . '</h3>';
 
             if (1 == $data[0]->reserve) $checked = 'checked="checked"';
@@ -292,23 +292,23 @@ function bwdb_list_spiele()
             echo '<div class="updated"><p>Spiel korrigiert!</p></div>';
         default:
             //Create an instance of our package class...
-            $bwdbListTable = new BWDB_List_Table_Spiele();
+            $bwadbListTable = new BWADB_List_Table_Spiele();
             // @debug:
             // print_array($_REQUEST);
             // Fetch, prepare, sort, and filter our data...
-            $bwdbListTable->prepare_items();
+            $bwadbListTable->prepare_items();
 
             ?>
                 <div class="wrap">
                     <h2>Liste aller Spiele</h2>
                     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-                    <form id="bwdb-spiele" action='' method="get">
-                        <?php $bwdbListTable->search_box('search', 'spiel'); ?>
+                    <form id="bwadb-spiele" action='' method="get">
+                        <?php $bwadbListTable->search_box('search', 'spiel'); ?>
                         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
 
                         <!-- Now we can render the completed list table -->
-                        <?php $bwdbListTable->display() ?>
+                        <?php $bwadbListTable->display() ?>
                     </form>
                 </div>
             <?php

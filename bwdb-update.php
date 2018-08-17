@@ -1,10 +1,10 @@
 <?php
-/* Marc Perel - bwdb Twitter List Update Code */
-function bwdb_twitter_list_update()
+/* Marc Perel - bwadb Twitter List Update Code */
+function bwadb_twitter_list_update()
 {
     //NB Always set wpdb globally!
     global $wpdb;
-    $twitter_table = $wpdb->prefix . "bwdb_twitter_list";
+    $twitter_table = $wpdb->prefix . "bwadb_twitter_list";
 
     if (!($_POST["edit_item"])) :
         // Create Insert SQL and Insert the new Data
@@ -16,9 +16,9 @@ function bwdb_twitter_list_update()
 
         /* Redirect - Remember don't post straight to this page, rather call the function so that your redirect works*/
         if (!$wpdb->query($insert_sql) === true) :
-            wp_redirect("admin.php?page=bwdb-twitter-list/bwdb-twitter-list.php&no_save=1");
+            wp_redirect("admin.php?page=bwadb-twitter-list/bwadb-twitter-list.php&no_save=1");
         else :
-            wp_redirect("admin.php?page=bwdb-twitter-list/bwdb-twitter-list.php&changes_done=1");
+            wp_redirect("admin.php?page=bwadb-twitter-list/bwadb-twitter-list.php&changes_done=1");
         endif;
     else :
         // Create Update SQL and Insert the new Data
@@ -29,9 +29,9 @@ function bwdb_twitter_list_update()
 
         /* Redirect - Remember don't post straight to this page, rather call a function so that your redirect works*/
         if (!$wpdb->query($insert_sql) === true) :
-            wp_redirect("admin.php?page=bwdb-twitter-list/bwdb-twitter-list.php&no_save=1");
+            wp_redirect("admin.php?page=bwadb-twitter-list/bwadb-twitter-list.php&no_save=1");
         else :
-            wp_redirect("admin.php?page=bwdb-twitter-list/bwdb-twitter-list.php&changes_done=1");
+            wp_redirect("admin.php?page=bwadb-twitter-list/bwadb-twitter-list.php&changes_done=1");
         endif;
     endif;
 }

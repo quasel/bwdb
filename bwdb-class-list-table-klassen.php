@@ -4,7 +4,7 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class BWDB_List_Table_Klassen extends WP_List_Table
+class BWADB_List_Table_Klassen extends WP_List_Table
 {
     /** ************************************************************************
      * REQUIRED. Set up a constructor that references the parent constructor. We
@@ -126,7 +126,7 @@ class BWDB_List_Table_Klassen extends WP_List_Table
 
         $attr['orderby'] = $orderby;
 
-        $this->items = bwdb_get_data($attr);
+        $this->items = bwadb_get_data($attr);
 
         // @todo - alt wozu? relikt? WTF?
         // $result = $wpdb->get_results("SELECT klss_id, name as klasse, anz_runden, anz_spiele, max_spieler FROM $wpdb->klasse ORDER BY $orderby");
@@ -154,9 +154,9 @@ class BWDB_List_Table_Klassen extends WP_List_Table
             if ('top' == $which) {
                 //The code that goes before the table is here
                 echo '<span<>Saison: </span>';
-                bwdb_dropdown('saison', 'ssn_id');
+                bwadb_dropdown('saison', 'ssn_id');
                 echo '<span>Bewerb: </span>';
-                bwdb_dropdown('bewerb', 'bwrb_id');
+                bwadb_dropdown('bewerb', 'bwrb_id');
                 // Notwendig ? Kopiert ...
                 do_action('restrict_manage_posts');
                 submit_button(__('Filter'), 'secondary', false, false, array('id' => 'post-query-submit'));
@@ -183,19 +183,19 @@ class BWDB_List_Table_Klassen extends WP_List_Table
 }
 
 // now lets use it ;)
-function bwdb_list_klassen()
+function bwadb_list_klassen()
 {
     global $wpdb;
     //Create an instance of our package class...
-    $bwdbListTable = new BWDB_List_Table_Klassen();
-    $base = "admin.php?page=bwdb_klassen"; //todo - besseren Weg finden ...
+    $bwadbListTable = new BWADB_List_Table_Klassen();
+    $base = "admin.php?page=bwadb_klassen"; //todo - besseren Weg finden ...
 
-    switch ($bwdbListTable->current_action()) {
+    switch ($bwadbListTable->current_action()) {
 
         case "edit":
             //$attr['klss_id'] = $_REQUEST['klss_id'];
             //$attr['groupby'] = 'z.sktn_id';
-            //$data=bwdb_get_data($attr);
+            //$data=bwadb_get_data($attr);
             ?>
 
             <?php
@@ -258,7 +258,7 @@ function bwdb_list_klassen()
 
 
     // Fetch, prepare, sort, and filter our data...
-    $bwdbListTable->prepare_items();
+    $bwadbListTable->prepare_items();
 
     // @debug:
     //	echo '<br />$_REQUEST =';
@@ -280,15 +280,15 @@ function bwdb_list_klassen()
                 <div class="col-wrap">
                     <!--  @todo Klassessuche
 		//	<form class="search-form" action="" method="get">
-		//	<?php $bwdbListTable->search_box('search', 'spieler'); ?>
+		//	<?php $bwadbListTable->search_box('search', 'spieler'); ?>
 		//	<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" 
 		//	</form>  -->
                     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-                    <form id="bwdb-klassen" action='' method="get">
+                    <form id="bwadb-klassen" action='' method="get">
                         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
                         <!-- Now we can render the completed list table -->
-                        <?php $bwdbListTable->display() ?>
+                        <?php $bwadbListTable->display() ?>
                         <br class="clear"/>
                     </form>
                 </div>

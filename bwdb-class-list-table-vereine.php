@@ -4,7 +4,7 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class BWDB_List_Table_Vereine extends WP_List_Table
+class BWADB_List_Table_Vereine extends WP_List_Table
 {
     /** ************************************************************************
      * REQUIRED. Set up a constructor that references the parent constructor. We
@@ -114,7 +114,7 @@ class BWDB_List_Table_Vereine extends WP_List_Table
 
         $attr['orderby'] = $orderby;
 
-        $this->items = bwdb_get_data($attr);
+        $this->items = bwadb_get_data($attr);
 
         $total_items = $wpdb->get_var("SELECT FOUND_ROWS()");
         $total_pages = ceil($total_items / $per_page);
@@ -165,19 +165,19 @@ class BWDB_List_Table_Vereine extends WP_List_Table
 }
 
 // now lets use it ;)
-function bwdb_list_vereine()
+function bwadb_list_vereine()
 {
     global $wpdb;
     //Create an instance of our package class...
-    $bwdbListTable = new BWDB_List_Table_Vereine();
-    $base = "admin.php?page=bwdb_vereine"; //todo - besseren Weg finden ...
+    $bwadbListTable = new BWADB_List_Table_Vereine();
+    $base = "admin.php?page=bwadb_vereine"; //todo - besseren Weg finden ...
 
-    switch ($bwdbListTable->current_action()) {
+    switch ($bwadbListTable->current_action()) {
 
         case "edit":
             //$attr['vrn_id'] = $_REQUEST['vrn_id'];
             //$attr['groupby'] = 'z.sktn_id';
-            //$data=bwdb_get_data($attr);
+            //$data=bwadb_get_data($attr);
             ?>
 
             <?php
@@ -233,7 +233,7 @@ function bwdb_list_vereine()
 
 
     // Fetch, prepare, sort, and filter our data...
-    $bwdbListTable->prepare_items();
+    $bwadbListTable->prepare_items();
 
     ?>
     <div class="wrap nosubsub">
@@ -250,15 +250,15 @@ function bwdb_list_vereine()
                 <div class="col-wrap">
                     <!--  @todo Vereinssuche
 		//	<form class="search-form" action="" method="get">
-		//	<?php $bwdbListTable->search_box('search', 'spieler'); ?>
+		//	<?php $bwadbListTable->search_box('search', 'spieler'); ?>
 		//	<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" 
 		//	</form>  -->
                     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-                    <form id="bwdb-vereine" action='' method="get">
+                    <form id="bwadb-vereine" action='' method="get">
                         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
                         <!-- Now we can render the completed list table -->
-                        <?php $bwdbListTable->display() ?>
+                        <?php $bwadbListTable->display() ?>
                         <br class="clear"/>
                     </form>
                 </div>

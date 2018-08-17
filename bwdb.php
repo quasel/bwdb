@@ -1,28 +1,28 @@
 <?php
 /*
-Plugin Name: bwdb Bowling Database
+Plugin Name: bwadb Bowling Database
 Plugin URI: http://obox-design.com
 Description: Allows the user to store and .... Bowling Games.
 Author: Tanja Swietli, Bernhard Gronau
-Version: 0
+Version: 1.x
 Author URI: http://www.twitter.com/MarcPerel
 */
 
 
 /* Set constant path to the members plugin directory. */
-if ( ! defined( 'BWDB_DIR' ) ) {
-	define( 'BWDB_DIR', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'BWADB_DIR' ) ) {
+	define( 'BWADB_DIR', plugin_dir_path( __FILE__ ) );
 }
 
 
-//When activating the plugin, we must call the install_bwdb_twitter_list() function.
-// @todo: DB anlegen/updaten register_activation_hook(__FILE__, "install_bwdb");
+//When activating the plugin, we must call the install_bwadb_twitter_list() function.
+// @todo: DB anlegen/updaten register_activation_hook(__FILE__, "install_bwadb");
 
 //Similarily we can include a function when deactivating the plugin, I chose not to
-//@todo: register_deactivation_hook(__FILE__, "delete_bwdb");
+//@todo: register_deactivation_hook(__FILE__, "delete_bwadb");
 
 /* Launch the plugin. */
-add_action( 'plugins_loaded', 'bwdb_setup' );
+add_action( 'plugins_loaded', 'bwadb_setup' );
 
 /**
  * Initialize the plugin.  This function loads the required files needed for the plugin
@@ -30,7 +30,7 @@ add_action( 'plugins_loaded', 'bwdb_setup' );
  *
  * @since 0.3.0
  */
-function bwdb_setup() {
+function bwadb_setup() {
 	global $wpdb;
 
 	// @todo: alternative finden
@@ -48,7 +48,7 @@ function bwdb_setup() {
 	// $wpdb->bewerb= $wpdb->prefix . 'bwdb_bewerb'; - nicht mehr im DB_Schema ...
 
 
-	$plugin_prefix = "bwdb_";
+	$plugin_prefix = "bwadb_";
 
 
 //	/* Load the translation of the plugin. */
@@ -60,65 +60,65 @@ function bwdb_setup() {
 //	/* Create shortcodes. */
 //	add_action( 'init', 'query_posts_shortcodes', 11 );
 
-// add_shortcode( 'list_spieler', 'bwdb_list_spieler' );
-// add_shortcode( 'list_spiele', 'bwdb_list_spiele' );
+// add_shortcode( 'list_spieler', 'bwadb_list_spieler' );
+// add_shortcode( 'list_spiele', 'bwadb_list_spiele' );
 	$BwDb_shortcodes = new BwDb_shortcodes();
 }
 
 //Include the files including the Install, Update and Delete Functions TODO ! automatischer pfad !!!!!;
-// @todo: include_once(BWDB_DIR . "bwdb-update.php");
+// @todo: include_once(BWADB_DIR . "bwdb-update.php");
 
-include_once( BWDB_DIR . "bwdb-auswertung.php" );
-include_once( BWDB_DIR . "bwdb-class-list-table-spiele.php" );
-include_once( BWDB_DIR . "bwdb-class-list-table-spieler.php" );
-include_once( BWDB_DIR . "bwdb-class-list-table-vereine.php" );
-include_once( BWDB_DIR . "bwdb-class-list-table-sektionen.php" );
-include_once( BWDB_DIR . "bwdb-class-list-table-klassen.php" );
-include_once( BWDB_DIR . "bwdb-shortcodes.php" );
+include_once( BWADB_DIR . "bwdb-auswertung.php" );
+include_once( BWADB_DIR . "bwdb-class-list-table-spiele.php" );
+include_once( BWADB_DIR . "bwdb-class-list-table-spieler.php" );
+include_once( BWADB_DIR . "bwdb-class-list-table-vereine.php" );
+include_once( BWADB_DIR . "bwdb-class-list-table-sektionen.php" );
+include_once( BWADB_DIR . "bwdb-class-list-table-klassen.php" );
+include_once( BWADB_DIR . "bwdb-shortcodes.php" );
 
 
-function install_bwdb() {
-	require_once( BWDB_DIR . "bwdb-setup.php" );
-	bwdb_setup_db();
+function install_bwadb() {
+	require_once( BWADB_DIR . "bwdb-setup.php" );
+	bwadb_setup_db();
 }
 
-function delete_bwdb() {
-	require_once( BWDB_DIR . "bwdb-delete.php" );
-	delete_bwdb();
+function delete_bwadb() {
+	require_once( BWADB_DIR . "bwdb-delete.php" );
+	delete_bwadb();
 }
 
 
 //If we're posting from a form to this page, perform the relevant functions BEFORE any other headers are passed
-if ( isset( $_POST["bwdb_update"] ) ) {
-	add_action( "init", "bwdb_update" );
+if ( isset( $_POST["bwadb_update"] ) ) {
+	add_action( "init", "bwadb_update" );
 }
-if ( isset( $_POST["bwdb_delete"] ) ) {
-	add_action( "init", "bwdb_delete" );
+if ( isset( $_POST["bwadb_delete"] ) ) {
+	add_action( "init", "bwadb_delete" );
 }
 
 
 //Add the Menu Item, which will load the twitter_list_menu() function
 // @todo: Rechte System optimieren
-add_action( "admin_menu", "bwdb_menu" );
+add_action( "admin_menu", "bwadb_menu" );
 
-function bwdb_menu() {
-	add_menu_page( "Bowling", "Bowling", 'edit_posts', 'bwdb', 'bwdb_insert' );
-	// add_submenu_page('bwdb', 'Auswertung', 'Auswertung', 8, 'bwdb'.'_auswertung', bwdb_auswertung);
-	add_submenu_page( 'bwdb', 'Klasse', 'Klasse', 'activate_plugins', 'bwdb' . '_klassen', 'bwdb_list_klassen' );
-	add_submenu_page( 'bwdb', 'Verein', 'Verein', 'activate_plugins', 'bwdb' . '_vereine', 'bwdb_list_vereine' );
-	add_submenu_page( 'bwdb', 'Sektion', 'Sektion', 'activate_plugins', 'bwdb' . '_sektionen', 'bwdb_list_sektionen' );
-	add_submenu_page( 'bwdb', 'Spieler', 'Spieler', 'edit_posts', 'bwdb' . '_spieler', 'bwdb_list_spieler' );
-	add_submenu_page( 'bwdb', 'Spiele', 'Spiele', 'activate_plugins', 'bwdb' . '_spiele', 'bwdb_list_spiele' );
+function bwadb_menu() {
+	add_menu_page( "Bowling", "Bowling", 'edit_posts', 'bwadb', 'bwadb_insert' );
+	// add_submenu_page('bwadb', 'Auswertung', 'Auswertung', 8, 'bwadb'.'_auswertung', bwadb_auswertung);
+	add_submenu_page( 'bwadb', 'Klasse', 'Klasse', 'activate_plugins', 'bwadb' . '_klassen', 'bwadb_list_klassen' );
+	add_submenu_page( 'bwadb', 'Verein', 'Verein', 'activate_plugins', 'bwadb' . '_vereine', 'bwadb_list_vereine' );
+	add_submenu_page( 'bwadb', 'Sektion', 'Sektion', 'activate_plugins', 'bwadb' . '_sektionen', 'bwadb_list_sektionen' );
+	add_submenu_page( 'bwadb', 'Spieler', 'Spieler', 'edit_posts', 'bwadb' . '_spieler', 'bwadb_list_spieler' );
+	add_submenu_page( 'bwadb', 'Spiele', 'Spiele', 'activate_plugins', 'bwadb' . '_spiele', 'bwadb_list_spiele' );
 }
 
 //Create the landing page/form
-function bwdb_insert() {
+function bwadb_insert() {
 
 	//NB Always set wpdb globally!
 	global $wpdb;
 
 	// $do = (isset($_GET["do"]);
-	//	$action = bwdb_current_action();
+	//	$action = bwadb_current_action();
 	//	echo "$action";
 
 
@@ -146,27 +146,27 @@ function bwdb_insert() {
 	}
 
 	if ( isset( $errors ) && isset( $_REQUEST['check'] ) ) {
-		bwdb_message( $errors );
+		bwadb_message( $errors );
 	}
 
 
 	switch ( $action ) {
 		case "edit":
-			bwdb_form_edit();
+			bwadb_form_edit();
 			// no break after edit - prepares the data !!!!
-			bwdb_form_show();
+			bwadb_form_show();
 			break;
 		case "show":
-			bwdb_form_show();
+			bwadb_form_show();
 			break;
 		case "check":
-			bwdb_form_show();
+			bwadb_form_show();
 			break;
 		case "save":
-			bwdb_form_save();
+			bwadb_form_save();
 			break;
 		default:
-			bwdb_form_choose();
+			bwadb_form_choose();
 			break;
 	}
 
@@ -182,7 +182,7 @@ function bwdb_insert() {
 	}
 }
 
-function bwdb_message( $errors ) {
+function bwadb_message( $errors ) {
 	echo '<div id="error" class="error">';
 	foreach ( $errors as $error ) {
 		echo "<li>$error</li>";
@@ -191,7 +191,7 @@ function bwdb_message( $errors ) {
 }
 
 // Ermitteln von Runde / Manschafft etc
-function bwdb_form_choose() {
+function bwadb_form_choose() {
 
 	$attr['ssn_id'] = '6';   // @todo Saison über DB ermitteln!!!
 
@@ -203,7 +203,7 @@ function bwdb_form_choose() {
 
 			<div class="form-field">
 				<label for="klss_ssn_id">Bitte Bewerb/Klasse auswählen</label>
-				<?php bwdb_dropdown( 'klss_ssn', 'klss_ssn_id', $attr ); ?>
+				<?php bwadb_dropdown( 'klss_ssn', 'klss_ssn_id', $attr ); ?>
 			</div>
 			<div class="form-field form-required">
 				<label for="runde">Runde: </label>
@@ -230,7 +230,7 @@ function bwdb_form_choose() {
 	<?php
 }
 
-function bwdb_form_show() {
+function bwadb_form_show() {
 	global $wpdb;
 
 	$action      = $_REQUEST['action'];
@@ -344,7 +344,7 @@ function bwdb_form_show() {
 
 }
 
-function bwdb_form_save() {
+function bwadb_form_save() {
 	global $wpdb;
 
 	// Erstellt ein neues Array aus den Formulardaten zum eintragen via wpdb
@@ -386,7 +386,7 @@ function bwdb_form_save() {
 	echo '<a href="' . add_query_arg( $query_arg ) . '">NEXT</a>';
 }
 
-function bwdb_form_edit() {
+function bwadb_form_edit() {
 
 	// @todo reorganize the whole insert thing to hand over $attr from the beginning ...
 	$attr = shortcode_atts( array(
@@ -400,7 +400,7 @@ function bwdb_form_edit() {
 
 	print_r( $attr );
 
-	$data = bwdb_get_data( $attr );
+	$data = bwadb_get_data( $attr );
 	// array Umbau wieder unsauber dafür kann der Rest fürs erste so bleiben ...
 	// Zuerst Sammeln wir je spieler die Daten und dann nummerierne wir das Array -> damits für die Ausgabe wieder passt ...
 	foreach ( $data AS $value ) {
@@ -417,7 +417,7 @@ function bwdb_form_edit() {
 
 
 // Experimental
-function print_bwdb( $ar ) {
+function print_bwadb( $ar ) {
 	echo "<pre>";
 	print_r( $ar );
 	echo "</pre>";

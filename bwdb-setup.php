@@ -4,7 +4,7 @@ if (preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
     die('You are not allowed to call this page directly.');
 }
 
-/* Marc Perel - bwdb Twitter List Setup Code */
+/* Marc Perel - bwadb Twitter List Setup Code */
 /**
  * creates all tables for the gallery
  * called during register_activation hook
@@ -13,7 +13,7 @@ if (preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
  * @return void
  */
 
-function bwdb_setup_db()
+function bwadb_setup_db()
 {
     //NB Always set wpdb globally!
     global $wpdb, $wp_roles, $wp_version;
@@ -47,21 +47,21 @@ function bwdb_setup_db()
 
 
     //Set Table Name
-    $bwdb_klasse = $wpdb->prefix . 'bwdb_klasse';
-    $bwdb_sektion = $wpdb->prefix . 'bwdb_sektion';
-    $bwdb_spiel = $wpdb->prefix . 'bwdb_spiel';
-    $bwdb_spieler = $wpdb->prefix . 'bwdb_spieler';
-    $bwdb_splr_sktn = $wpdb->prefix . 'bwdb_splr_sktn';
-    $bwdb_verein = $wpdb->prefix . 'bwdb_verein';
+    $bwadb_klasse = $wpdb->prefix . 'bwdb_klasse';
+    $bwadb_sektion = $wpdb->prefix . 'bwdb_sektion';
+    $bwadb_spiel = $wpdb->prefix . 'bwdb_spiel';
+    $bwadb_spieler = $wpdb->prefix . 'bwdb_spieler';
+    $bwadb_splr_sktn = $wpdb->prefix . 'bwdb_splr_sktn';
+    $bwadb_verein = $wpdb->prefix . 'bwdb_verein';
 
 
     // Create the main Table, don't forget the ( ` ) - MySQL Reference @ http://www.w3schools.com/Sql/sql_create_table.asp
     // could be case senstive : http://dev.mysql.com/doc/refman/5.1/en/identifier-case-sensitivity.html
 
 
-    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_klasse'")) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwadb_klasse'")) {
 
-        $sql = "CREATE TABLE " . $bwdb_klasse . " (
+        $sql = "CREATE TABLE " . $bwadb_klasse . " (
 		klss_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
 		name VARCHAR(255) NOT NULL ,
 		anz_runden BIGINT(20) NOT NULL ,
@@ -76,9 +76,9 @@ function bwdb_setup_db()
     }
 
 
-    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_sektion'")) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwadb_sektion'")) {
 
-        $sql = "CREATE TABLE " . $bwdb_sektion . " (
+        $sql = "CREATE TABLE " . $bwadb_sektion . " (
 		sktn_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
         name VARCHAR(255) NOT NULL ,
 		vrn_id BIGINT(20) DEFAULT '0' NOT NULL ,
@@ -93,9 +93,9 @@ function bwdb_setup_db()
         dbDelta($sql);
     }
 
-    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_spiel'")) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwadb_spiel'")) {
 
-        $sql = "CREATE TABLE " . $bwdb_spiel . " (
+        $sql = "CREATE TABLE " . $bwadb_spiel . " (
 		spl_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
 		splr_id BIGINT(20) NOT NULL ,
 		sktn_id BIGINT(20) NOT NULL ,
@@ -114,9 +114,9 @@ function bwdb_setup_db()
     }
 
 
-    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_spieler'")) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwadb_spieler'")) {
 
-        $sql = "CREATE TABLE " . $bwdb_spieler . " (
+        $sql = "CREATE TABLE " . $bwadb_spieler . " (
 		splr_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
         vorname VARCHAR(255) NOT NULL ,
         nachname VARCHAR(255) NOT NULL ,
@@ -131,9 +131,9 @@ function bwdb_setup_db()
     }
 
 
-    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_splr_sktn'")) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwadb_splr_sktn'")) {
 
-        $sql = "CREATE TABLE " . $bwdb_splr_sktn . " (
+        $sql = "CREATE TABLE " . $bwadb_splr_sktn . " (
 		sktn_id BIGINT(20) NOT NULL ,
 		splr_id BIGINT(20) NOT NULL ,
 		korr VARCHAR(255) NOT NULL ,
@@ -144,9 +144,9 @@ function bwdb_setup_db()
         dbDelta($sql);
     }
 
-    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwdb_verein'")) {
+    if (!$wpdb->get_var("SHOW TABLES LIKE '$bwadb_verein'")) {
 
-        $sql = "CREATE TABLE " . $bwdb_verein . " (
+        $sql = "CREATE TABLE " . $bwadb_verein . " (
 		vrn_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
         name VARCHAR(255) NOT NULL ,
 		korr VARCHAR(255) NOT NULL ,
@@ -158,7 +158,7 @@ function bwdb_setup_db()
     }
 
     // check one table again, to be sure
-//	if( !$wpdb->get_var( "SHOW TABLES LIKE '$bwdb_bewerb'" ) ) {
+//	if( !$wpdb->get_var( "SHOW TABLES LIKE '$bwadb_bewerb'" ) ) {
 //		update_option( "ngg_init_check", __('NextGEN Gallery : Tables could not created, please check your database settings',"nggallery") );
 //		return;
 //	}	

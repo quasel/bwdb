@@ -22,7 +22,7 @@ class BwDb_Shortcodes
         // add_filter('the_excerpt', array(&$this, 'convert_shortcode'));
         // add_filter('the_excerpt', 'do_shortcode', 11);
 
-        add_shortcode('bwdb', array(&$this, 'bwdbShow'));
+        add_shortcode('bwadb', array(&$this, 'bwadbShow'));
 
     }
 
@@ -35,7 +35,7 @@ class BwDb_Shortcodes
      * @param array $attr
      * @return nothing
      */
-    function bwdbShow($attr = array('show' => 'schnitt'), $content = '')
+    function bwadbShow($attr = array('show' => 'schnitt'), $content = '')
     {
 
 
@@ -57,7 +57,7 @@ class BwDb_Shortcodes
             'show' => ''
         ), $merged);
 
-        bwdbShowAvg($final);
+        bwadbShowAvg($final);
 
     }
 }

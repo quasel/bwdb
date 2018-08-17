@@ -1,7 +1,7 @@
 <?php
 
-/* BWDB Auswertung */
-function bwdb_auswertung() {
+/* BWADB Auswertung */
+function bwadb_auswertung() {
 	global $BwDb_shortcodes;
 	//NB Always set wpdb globally!
 	global $wpdb;
@@ -11,14 +11,14 @@ function bwdb_auswertung() {
 	<hr>
 	<?php
 	// Aufruf
-	// BwDb_shortcodes::bwdbShow( array ( sktn_klss_ssn_id => '6', show => 'sktn_klss_ssn') );
-	// BwDb_shortcodes::bwdbShow( array ( vrn_id => '1', show => 'verein') );
+	// BwDb_shortcodes::bwadbShow( array ( sktn_klss_ssn_id => '6', show => 'sktn_klss_ssn') );
+	// BwDb_shortcodes::bwadbShow( array ( vrn_id => '1', show => 'verein') );
 	//alternativ
-	// do_shortcode("[bwdb sktn_klss_ssn_id=6, show=sktn_klss_ssn]");
+	// do_shortcode("[bwadb sktn_klss_ssn_id=6, show=sktn_klss_ssn]");
 	// immer mindestens einen Parameter angeben sonst funktioniert array_merge nicht ....
 	// Achtung Werte im shortcode können das Ergebnis unerwartet verfälschen da $_GET ausgelesen wird und
 	// priorisiert wird ...
-	do_shortcode( '[bwdb show=schnitt]' );
+	do_shortcode( '[bwadb show=schnitt]' );
 
 	// @todo - Doppel-Liste wie Partsch!!!!!!
 	// @todo - DB - Name ändern in verein ? -> natural joins ....
@@ -28,16 +28,16 @@ function bwdb_auswertung() {
 	<?php
 }
 
-function bwdbShowAvg( $attr ) {
+function bwadbShowAvg( $attr ) {
 // @todo:  $attr durchgängi nutzen nicht mla aus dem Request und mal so möglich?
 
 	$base           = $_SERVER['REQUEST'];
 	$attr['ssn_id'] = $_REQUEST['ssn_id'];
 
 	// Ausgabe der Saisonen in einer ul - die aktuelle Saison erhält die klasse: active
-	echo '<div class="bwdb_saison saison"><ul class="bwdb_saison saison">';
+	echo '<div class="bwadb_saison saison"><ul class="bwadb_saison saison">';
 
-	$saison = bwdb_get_data( array( 'output' => 'saison', 'orderby' => 'ssn_id DESC' ) );
+	$saison = bwadb_get_data( array( 'output' => 'saison', 'orderby' => 'ssn_id DESC' ) );
 	foreach ( $saison as $saison ) {
 		if ( ! isset( $attr['ssn_id'] ) ) {
 			$attr['ssn_id'] = $saison->ssn_id;
@@ -62,8 +62,8 @@ function bwdbShowAvg( $attr ) {
 	echo '</ul></div>';
 	?>
 
-	<div class="bwdb_result saison">
-		<ul class="bwdb_schnitt saison">
+	<div class="bwadb_result saison">
+		<ul class="bwadb_schnitt saison">
 			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'   => 'schnitt',
@@ -95,7 +95,7 @@ function bwdbShowAvg( $attr ) {
 				), $base ); ?>">All-Event Herren</a>
 			</li>
 		</ul>
-		<ul class="bwdb_bewerbe saison">
+		<ul class="bwadb_bewerbe saison">
 			<li>
 				<a href="<?php echo add_query_arg( array(
 					'show'    => 'klss_ssn',
@@ -154,16 +154,16 @@ function bwdbShowAvg( $attr ) {
 
 	switch ( $show ) {
 		case "verein":
-			bwdbShowVerein( $attr );
+			bwadbShowVerein( $attr );
 			break;
 		case "sktn_klss_ssn":
-			bwdbShowSektion( $attr );
+			bwadbShowSektion( $attr );
 			break;
 		case "spieler":
-			bwdbShowSpieler( $attr );
+			bwadbShowSpieler( $attr );
 			break;
 		case "klss_ssn";
-			bwdbShowSktnList( $attr );
+			bwadbShowSktnList( $attr );
 			break;
 		case "schnitt":
 			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
@@ -183,7 +183,7 @@ function bwdbShowAvg( $attr ) {
 					echo '<h2>Schnittliste</h2>';
 					break;
 			}
-			bwdbShowAvgList( $attr );
+			bwadbShowAvgList( $attr );
 			break;
 		case "allevent":
 			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
@@ -203,10 +203,10 @@ function bwdbShowAvg( $attr ) {
 					echo '<h2>Schnittliste</h2>';
 					break;
 			}
-			bwdbShowAvgList( $attr );
+			bwadbShowAvgList( $attr );
 			break;
 		default:
-			bwdbShowAvgList( $attr );
+			bwadbShowAvgList( $attr );
 			break;
 	}
 
@@ -216,7 +216,7 @@ function bwdbShowAvg( $attr ) {
 /*********************************************/
 /* 			Funktion SCHNITT    			 */
 /*********************************************/
-function bwdbShowAvgList( $attr ) {
+function bwadbShowAvgList( $attr ) {
 
 	// Aufruf Funktion Statistik
 
@@ -224,11 +224,11 @@ function bwdbShowAvgList( $attr ) {
 	$attr['orderby'] = 'schnitt DESC';
 
 
-	$schnittliste = bwdb_get_data( $attr );
+	$schnittliste = bwadb_get_data( $attr );
 
 	?>
 
-	<table id="bwdb" "class="bwdb" >
+	<table id="bwadb" "class="bwadb" >
 		<thead>
 		<tr>
 			<th></th>
@@ -315,7 +315,7 @@ function bwdbShowAvgList( $attr ) {
 /*********************************************/
 /* 		Funktion SEKTIONS LISTE ANZEIGE		 */
 /*********************************************/
-function bwdbShowSktnList( $attr ) {
+function bwadbShowSktnList( $attr ) {
 
 	global $wpdb;
 
@@ -325,7 +325,7 @@ function bwdbShowSktnList( $attr ) {
 	$attr['orderby'] = 'pins DESC';
 	$attr['reserve'] = '0';
 
-	$data = bwdb_get_data( $attr );
+	$data = bwadb_get_data( $attr );
 	//	$debug = true;
 	if ( true == $debug ) {
 		echo '<h2> Aufruf erfolgt mit: </h2>';
@@ -336,7 +336,7 @@ function bwdbShowSktnList( $attr ) {
 	}
 
 
-	$klasse = bwdb_get_data( array( 'output' => 'klasse', 'klss_id' => $_REQUEST['klss_id'] ) );
+	$klasse = bwadb_get_data( array( 'output' => 'klasse', 'klss_id' => $_REQUEST['klss_id'] ) );
 
 	?>
 
@@ -344,7 +344,7 @@ function bwdbShowSktnList( $attr ) {
 	<h2><?php foreach ( $klasse as $klasse ) {
 			echo '/ ' . $klasse->klasse . ' /';
 		} ?></h2>
-	<table id="bwdb" class="bwdb" >
+	<table id="bwadb" class="bwadb" >
 		<thead>
 		<tr>
 			<th></th>
@@ -395,13 +395,13 @@ function bwdbShowSktnList( $attr ) {
 /*********************************************/
 /* 			Funktion SPIELER    			 */
 /*********************************************/
-function bwdbShowSpieler( $attr ) {
+function bwadbShowSpieler( $attr ) {
 	extract( $attr );
-	$data = bwdb_get_data( $attr );
+	$data = bwadb_get_data( $attr );
 
 	echo '<h2>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . ' (Passnummer: ' . $data[0]->splr_id . ')</h2>';
 
-	bwdbShowAvgList( $attr );
+	bwadbShowAvgList( $attr );
 
 	foreach ( $data AS $value ) {
 		$result[ $value->sktn_klss_ssn_id ][ klasse ]                                  = $value->klasse;
@@ -413,7 +413,7 @@ function bwdbShowSpieler( $attr ) {
 	$spalten = 6; // @todo
 	?>
 
-	<table id="bwdb" "class="bwdb" >
+	<table id="bwadb" "class="bwadb" >
 		<thead>
 		<tr>
 			<th colspan="<?php echo $spalten + 4; ?>">Ergebnis-Details</th>
@@ -480,12 +480,12 @@ function bwdbShowSpieler( $attr ) {
 erwartet vrn_id, klss_id und ssn_id (filter)-> Anzeige der passenden Daten der Saison über sktn_klss_ssn 
 
 */
-function bwdbShowVerein( $attr ) {
+function bwadbShowVerein( $attr ) {
 	$attr['min'] = 1;
 
 	echo '<h2>Verein: ' . $sktn_vrn[0]->verein . '</h2>';
 
-	bwdbShowAvgList( $attr );
+	bwadbShowAvgList( $attr );
 	?>
 
 	<table>
@@ -498,7 +498,7 @@ function bwdbShowVerein( $attr ) {
 		<tbody>
 
 		<?php
-		$sktn_vrn = bwdb_get_data( array(
+		$sktn_vrn = bwadb_get_data( array(
 			'output' => 'sktn_klss_ssn',
 			'vrn_id' => $attr[ vrn_id ],
 			'ssn_id' => $attr[ ssn_id ]
@@ -533,17 +533,17 @@ function bwdbShowVerein( $attr ) {
 /*********************************************/
 /* 			Funktion SEKTION    			 */
 /*********************************************/
-function bwdbShowSektion( $attr ) {
+function bwadbShowSektion( $attr ) {
 	$attr['reserve'] = '';
 	$attr['team']    = '';
 	$attr['orderby'] = 'runde ASC';
 
 	extract( $attr );
-	$data = bwdb_get_data( $attr );
+	$data = bwadb_get_data( $attr );
 
 	echo '<h2>Sektion: ' . $data[0]->sektion . '</h2>';
 
-	bwdbShowAvgList( $attr );
+	bwadbShowAvgList( $attr );
 
 	foreach ( $data AS $value ) {
 		$result[ $value->runde ][ date ] = $value->date;
@@ -563,7 +563,7 @@ function bwdbShowSektion( $attr ) {
 	<?php
 	foreach ( $result as $nr => $runde ) {
 		?>
-		<table "class="bwdb" >
+		<table "class="bwadb" >
 		<tbody>
 		<tr>
 			<td>Runde: <?php echo $nr; ?></td>
@@ -666,7 +666,7 @@ function bwdbShowSektion( $attr ) {
 /*********************************************/
 /* 			Funktion STATISTIKEN			 */
 /*********************************************/
-function bwdb_get_data( $attr ) {
+function bwadb_get_data( $attr ) {
 
 	//NB Always set wpdb globally!
 	global $wpdb;
@@ -1053,10 +1053,10 @@ function bwdb_get_data( $attr ) {
 	$debug = false;
 	if ( true == $debug && current_user_can( 'manage_options' ) ) {
 
-		print_bwdb( $attr );
+		print_bwadb( $attr );
 		$wpdb->print_error;
 		echo $wpdb->last_query;
-		print_bwdb( $result );
+		print_bwadb( $result );
 		echo "<br /><hr />";
 	}
 
@@ -1085,7 +1085,7 @@ function bwdb_get_data( $attr ) {
 
 // @todo verbessern ;) - welche Tabele solls sein und welche spalte = auch im Request dieselbe id !!!!
 // $where um die Abfrage zu filtern .... 
-function bwdb_dropdown( $output, $col, $attr = array() ) {
+function bwadb_dropdown( $output, $col, $attr = array() ) {
 	global $wpdb;
 
 	switch ( $output ) {
@@ -1110,7 +1110,7 @@ function bwdb_dropdown( $output, $col, $attr = array() ) {
 	$attr['output']  = $output;
 	$attr['orderby'] = $orderby;
 
-	$result = bwdb_get_data( $attr );
+	$result = bwadb_get_data( $attr );
 
 
 	$id = isset( $_REQUEST[ $col ] ) ? (int) $_REQUEST[ $col ] : 0;
@@ -1143,7 +1143,7 @@ function bwdb_dropdown( $output, $col, $attr = array() ) {
 }
 
 // DEvelopment
-function bwdb_get_sktn_klss_ssn( $attr ) {
+function bwadb_get_sktn_klss_ssn( $attr ) {
 
-	$data = bwdb_get_data( $attr );
+	$data = bwadb_get_data( $attr );
 }

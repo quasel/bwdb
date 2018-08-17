@@ -4,7 +4,7 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class BWDB_List_Table_Spieler extends WP_List_Table
+class BWADB_List_Table_Spieler extends WP_List_Table
 {
     /** ************************************************************************
      * REQUIRED. Set up a constructor that references the parent constructor. We
@@ -130,7 +130,7 @@ class BWDB_List_Table_Spieler extends WP_List_Table
 
         $attr['orderby'] = $orderby;
 
-        $this->items = bwdb_get_data($attr);
+        $this->items = bwadb_get_data($attr);
 // @debug
 //    		echo '<pre>';
 //	        print_r($this->items);
@@ -159,10 +159,10 @@ class BWDB_List_Table_Spieler extends WP_List_Table
             if ('top' == $which) {
                 //The code that goes before the table is here
                 echo '<span<>Verein: </span>';
-                bwdb_dropdown('verein', 'vrn_id');
+                bwadb_dropdown('verein', 'vrn_id');
                 echo '<span>Sektion: </span>';
                 if (!empty($_REQUEST['vrn_id'])) {
-                    bwdb_dropdown('sktn_klss_ssn', 'sktn_klss_ssn_id', array('vrn_id' => $_REQUEST['vrn_id']));
+                    bwadb_dropdown('sktn_klss_ssn', 'sktn_klss_ssn_id', array('vrn_id' => $_REQUEST['vrn_id']));
                 } else {
                     echo '<span>Bitte Verein wählen</span>';
                 }
@@ -193,19 +193,19 @@ class BWDB_List_Table_Spieler extends WP_List_Table
 }
 
 // now lets use it ;)
-function bwdb_list_spieler()
+function bwadb_list_spieler()
 {
     global $wpdb;
     //Create an instance of our package class...
-    $bwdbListTable = new BWDB_List_Table_Spieler();
-    $base = "admin.php?page=bwdb_spieler"; //todo - besseren Weg finden ...
+    $bwadbListTable = new BWADB_List_Table_Spieler();
+    $base = "admin.php?page=bwadb_spieler"; //todo - besseren Weg finden ...
 
-    switch ($bwdbListTable->current_action()) {
+    switch ($bwadbListTable->current_action()) {
 
         case "edit":
             //$attr['splr_id'] = $_REQUEST['splr_id'];
             //$attr['groupby'] = 'z.sktn_klss_ssn_id';
-            //$data=bwdb_get_data($attr);
+            //$data=bwadb_get_data($attr);
             ?>
 
             <?php
@@ -287,7 +287,7 @@ function bwdb_list_spieler()
                     }
                     ?>
                     <div class="form-field form-required">
-                        <?php bwdb_dropdown('sektion', 'sktn_klss_ssn_id', array('vrn_id' => $_REQUEST['vrn_id'])); ?>
+                        <?php bwadb_dropdown('sektion', 'sktn_klss_ssn_id', array('vrn_id' => $_REQUEST['vrn_id'])); ?>
                     </div>
                     <?php submit_button("Speichern", 'primary', 'button'); ?>
                 </form>
@@ -331,7 +331,7 @@ function bwdb_list_spieler()
 
 
     // Fetch, prepare, sort, and filter our data...
-    $bwdbListTable->prepare_items();
+    $bwadbListTable->prepare_items();
 
     // @debug:
     //	echo '<br />$_REQUEST =';
@@ -358,15 +358,15 @@ function bwdb_list_spieler()
             <div id="col-right">
                 <div class="col-wrap">
                     <form class="search-form" action="" method="get">
-                        <?php $bwdbListTable->search_box('search', 'spieler'); ?>
+                        <?php $bwadbListTable->search_box('search', 'spieler'); ?>
                         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"
                     </form>
                     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-                    <form id="bwdb-spieler" action='' method="get">
+                    <form id="bwadb-spieler" action='' method="get">
                         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
                         <!-- Now we can render the completed list table -->
-                        <?php $bwdbListTable->display() ?>
+                        <?php $bwadbListTable->display() ?>
                         <br class="clear"/>
                     </form>
                 </div>
@@ -407,7 +407,7 @@ function bwdb_list_spieler()
                             </div>
                             <div class="form-field form-required">
                                 <label for="verein">Verein</label>
-                                <?php bwdb_dropdown('verein', 'vrn_id'); ?>
+                                <?php bwadb_dropdown('verein', 'vrn_id'); ?>
                             </div>
                             <div class="form-checkbox">
                                 <?php // wenn eine vrn_id vorhanden ist - werden die Sektions Checkboxen angezeigt !
@@ -418,7 +418,7 @@ function bwdb_list_spieler()
                                     $attr['groupby'] = 's.sktn_klss_ssn_id';
                                     $attr['orderby'] = 's.sktn_klss_ssn_id DESC';
                                     $attr['output'] = 'sktn_klss_ssn';
-                                    $sktn_vrn = bwdb_get_data($attr);
+                                    $sktn_vrn = bwadb_get_data($attr);
 
                                     foreach ($sktn_vrn as $sktn_v) {
                                         if (!empty($sktn_v->sktn_klss_ssn_id)) { // los gehts aber nur wenns eine skt_id gibt - da wir über Spieler joinen gäbs sonst auch eine '' Sektion ...
@@ -427,7 +427,7 @@ function bwdb_list_spieler()
                                             if (!empty($_REQUEST[splr_id])) { // nur Sektionen suchen wenns auch einen Spieler gibt sonst brauchts keine checked boxen ...
                                                 $attr['splr_id'] = $_GET['splr_id'];
                                                 $attr['output'] = 'spieler';
-                                                $sktn_splr = bwdb_get_data($attr);
+                                                $sktn_splr = bwadb_get_data($attr);
                                                 foreach ($sktn_splr as $sktn_s) {
                                                     if ($sktn_v->sktn_klss_ssn_id == $sktn_s->sktn_klss_ssn_id) $sktn_klss_ssn_id = $sktn_v->sktn_klss_ssn_id; // für die auswahl checked ....
                                                 }
