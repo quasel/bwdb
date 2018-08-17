@@ -100,7 +100,7 @@ function bwdbShowAvg( $attr ) {
 						'show'    => 'klss_ssn',
 						'klss_id' => '',
 						'ssn_id'  => $attr['ssn_id']
-					), $current_url ); ?>">Teams</a>
+					), $current_url ); ?>">Results</a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo add_query_arg( array(
@@ -159,13 +159,13 @@ function bwdbShowAvg( $attr ) {
 			if ( empty( $attr['title'] ) ) {
 				switch ( $_REQUEST['sex'] ) {
 					case '0':
-						$attr['title'] = "Schnittliste Damen";
+						$attr['title'] = "Results Women";
 						break;
 					case '1':
-						$attr['title'] = "Schnittliste Herren";
+						$attr['title'] = "Results Men";
 						break;
 					default:
-						$attr['title'] = "Schnittliste";
+						$attr['title'] = "Results";
 						break;
 				}
 			}
@@ -226,16 +226,16 @@ function bwdbShowAvgList( $attr ) {
     <thead>
     <tr>
         <th></th>
-        <th>Spielername</th>
-        <th>Verein</th>
+        <th>Name</th>
+        <th>Team</th>
         <th>Pins</th>
         <th>Sp.</th>
-        <th>Schnitt</th>
-        <th>HSp.</th>
+        <th>Avg</th>
+        <th>HGm</th>
         <th>HSER</th>
-        <th>%-Abw *</th>
+        <th>%-Diff *</th>
         <th>NSp.</th>
-        <th>%-Abw *</th>
+        <th>%-Diff *</th>
         <th>DSp. **</th>
     </tr>
     </thead>
@@ -376,11 +376,11 @@ function bwdbShowSktnList( $attr ) {
 			$klassen_liste .= '| ' . $klss->klasse . ' |';
 		}
 	} else {
-		$klassen_liste = "Alle Klassen";
+		$klassen_liste = "";
 	}
 
 	if ( empty( $attr['title'] ) ) {
-		$attr['title'] = 'Sektionsstatistik';
+		$attr['title'] = 'Team Statistics';
 	}
 
 	?>
@@ -392,13 +392,13 @@ function bwdbShowSktnList( $attr ) {
             <thead>
             <tr>
                 <th></th>
-                <th>Sektion</th>
-                <th>Verein</th>
+                <th>Team</th>
+                <th>Country</th>
                 <th>Pins</th>
-                <th>Spiele</th>
-                <th>HSp.</th>
+                <th>Games</th>
+                <th>HGm.</th>
                 <th>HSer.</th>
-                <th>Schnitt</th>
+                <th>Avg.</th>
             </tr>
             </thead>
             </tbody>
@@ -484,22 +484,22 @@ function bwdbShowVrnList( $attr ) {
 			$klassen_liste .= '| ' . $klss->klasse . ' |';
 		}
 	} else {
-		$klassen_liste = "Alle Klassen";
+		$klassen_liste = "";
 	}
 
-	echo "<h3>Vereinsstatistik: $klassen_liste</h3>";
+	echo "<h3>Team Statisitics: $klassen_liste</h3>";
 
 	?>
     <table id=<?php echo $attr['id']; ?> class="bwdb">
         <thead>
         <tr>
             <th></th>
-            <th>Verein</th>
+            <th>Country</th>
             <th>Pins</th>
-            <th>Spiele</th>
-            <th>HSp.</th>
+            <th>Games</th>
+            <th>HGm.</th>
             <th>HSer.</th>
-            <th>Schnitt</th>
+            <th>Avg.</th>
         </tr>
         </thead>
         </tbody>
@@ -548,7 +548,7 @@ function bwdbShowSpieler( $attr ) {
 
 
 	// echo '<h2>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . ' (Passnummer: ' . $data[0]->pnr . ')</h2>';
-	echo '<h2>Spieler: ' . $data[0]->vorname . ' ' . $data[0]->nachname . '</h2>';
+	echo '<h2>Player: ' . $data[0]->vorname . ' ' . $data[0]->nachname . '</h2>';
 
 	bwdbShowAvgList( $attr );
 
@@ -565,7 +565,7 @@ function bwdbShowSpieler( $attr ) {
     <table id=<?php echo $attr['id']; ?> "class=" bwdb" >
     <thead>
     <tr>
-        <th colspan="<?php echo $spalten + 4; ?>">Ergebnis-Details</th>
+        <th colspan="<?php echo $spalten + 4; ?>">Details</th>
     </tr>
     <tr>
         <th>Bewerb</th>
@@ -638,7 +638,7 @@ function bwdbShowVerein( $attr ) {
 		'ssn_id' => $attr['ssn_id']
 	) );
 
-	echo '<h2>Verein: ' . $sktn_vrn[0]->verein . '</h2>';
+	echo '<h2>Country: ' . $sktn_vrn[0]->verein . '</h2>';
 
 	bwdbShowAvgList( $attr );
 
@@ -694,7 +694,7 @@ function bwdbShowSektion( $attr ) {
 	extract( $attr );
 	$data = bwdb_get_data( $attr );
 
-	echo '<h2>Sektion: ' . $data[0]->sektion . '</h2>';
+	echo '<h2>Team: ' . $data[0]->sektion . '</h2>';
 
 	bwdbShowAvgList( $attr );
 
@@ -711,7 +711,7 @@ function bwdbShowSektion( $attr ) {
 
 	?>
 
-    <h2> Ergebnis-Details</h2>
+    <h2>Details</h2>
 
 	<?php
 	foreach ( $result as $nr => $runde ) {
@@ -723,7 +723,7 @@ function bwdbShowSektion( $attr ) {
             <td colspan="<?php echo $data[0]->anz_spiele + 2; ?>">Datum: <?php echo $runde['date']; ?></td>
         </tr>
         <tr>
-            <th>Spieler</th>
+            <th>Player</th>
 			<?php for ( $x = 1;
 			$x <= $data[0]->anz_spiele;
 			++ $x ) { ?>
@@ -766,7 +766,7 @@ function bwdbShowSektion( $attr ) {
 		}
 		?>
         <tr>
-            <td>Mannschaftsergebnis:</td>
+            <td>Result:</td>
 			<?php foreach ( $summe_spiel_ergebnisse as $summe_spiel_ergebnis ) {
 				echo '<td align="right">' . $summe_spiel_ergebnis . '</td>';
 			} ?>
@@ -842,6 +842,7 @@ function bwdb_get_data( $attr ) {
 	$reserve = '';
 	$output  = '';
 	$limit   = '';
+	$handicap = '10';
 
 	extract( $attr );
 
@@ -862,6 +863,7 @@ function bwdb_get_data( $attr ) {
 	 * sex                Geschlecht (1 = m, 0 = w, nicht definiert gibt beides aus)
 	 * reserve            Reserve    (1 = ja, 0 = nein, nicht definiert gibt beides aus)
 	 * min                Mindestanzahl für Spiele, für All-Event-Listen z.B.
+     * handicap
 	 ********************************************************************************
 	 * INTERNE ARRAY PARAMETER
 	 * output            was wird gesucht Verein, Sektion, etc ... veränderung der fields&joins
@@ -930,6 +932,10 @@ function bwdb_get_data( $attr ) {
 		$where .= "  AND reserve = $reserve";
 	}
 
+	if ( ! is_numeric( $handicap ) ) {
+		$handicap = '0';
+	}
+
 
 	// If a search pattern is specified, load the posts that match
 	$search = '';
@@ -991,6 +997,7 @@ function bwdb_get_data( $attr ) {
 	}
 
 
+	// @todo maybe extract ergebnis to be only calculated if there is an handicap!
 	$fields = "	    rel_splr.ID as splr_id,
 					rel_splr.post_title as nachname,
 					rel_splr.rel_vrn.post_title as verein,
@@ -1014,6 +1021,7 @@ function bwdb_get_data( $attr ) {
 					d.ergebnis,
 					";
 
+	// für HANDICAP - CASE WHEN rel_splr.geschlecht.meta_value = '1' THEN d.ergebnis ELSE d.ergebnis+$handicap END as
 
 	// Achtung Verein wird über Spieler ermittelt = aktueller Verein = fail fall sich der Verein ändert .. korriegieren Verein über sektion des Spiels ermitteln ...
 	$pod_name = 'spl';
