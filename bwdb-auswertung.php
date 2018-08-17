@@ -1,33 +1,5 @@
 <?php
 
-/* BWDB Auswertung */
-function bwdb_auswertung() {
-	global $BwDb_shortcodes;
-	//NB Always set wpdb globally!
-	global $wpdb;
-
-	?>
-    <h1>Spielwiese...</h1>
-    <hr>
-	<?php
-	// Aufruf
-	// BwDb_shortcodes::bwdbShow( array ( sktn_klss_ssn_id => '6', show => 'sktn_klss_ssn') );
-	// BwDb_shortcodes::bwdbShow( array ( vrn_id => '1', show => 'verein') );
-	//alternativ
-	// do_shortcode("[bwdb sktn_klss_ssn_id=6, show=sktn_klss_ssn]");
-	// immer mindestens einen Parameter angeben sonst funktioniert array_merge nicht ....
-	// Achtung Werte im shortcode können das Ergebnis unerwartet verfälschen da $_GET ausgelesen wird und
-	// priorisiert wird ...
-	do_shortcode( '[bwdb show=schnitt]' );
-
-	// @todo - Doppel-Liste wie Partsch!!!!!!
-	// @todo - DB - Name ändern in verein ? -> natural joins ....
-
-	?>
-    <hr>
-	<?php
-}
-
 function bwdbShowAvg( $attr ) {
 // @todo:  $attr durchgängi nutzen nicht mal aus dem Request und mal so möglich?
 

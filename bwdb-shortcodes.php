@@ -79,5 +79,3 @@ class BwDb_Shortcodes {
 
 	}
 }
-
-?>
