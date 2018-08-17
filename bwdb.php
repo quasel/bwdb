@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: bwdb Bowling Database
+Plugin Name: Bowling Database v2 (bwdb)
 Plugin URI: http://obox-design.com
 Description: Allows the user to store and .... Bowling Games.
 Author: Tanja Swietli, Bernhard Gronau
