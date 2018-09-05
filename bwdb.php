@@ -71,13 +71,13 @@ function bwdb_klss_ssn_title( $pieces, $is_new_item ) {
 	$rel_klss = $rel_ssn = '';
 	//get value of "rel_klss" if possible
 	if ( isset( $pieces['fields']['rel_klss'] ) && isset( $pieces['fields']['rel_klss']['value'] ) ) {
-		$rel_klss_id = current( $pieces['fields']['rel_klss']['value'] );
+		$rel_klss_id = $pieces['fields']['rel_klss']['value'];
 		$rel_klss    = get_the_title( $rel_klss_id );
 
 	}
 	//get value of "rel_ssn" if possible
 	if ( isset( $pieces['fields']['rel_ssn'] ) && isset( $pieces['fields']['rel_ssn']['value'] ) ) {
-		$rel_ssn_id = current( $pieces['fields']['rel_ssn']['value'] );
+		$rel_ssn_id = $pieces['fields']['rel_ssn']['value'];
 		$rel_ssn    = get_the_title( $rel_ssn_id );
 
 	}
@@ -100,6 +100,7 @@ function bwdb_sktn_klss_ssn_title( $pieces, $is_new_item ) {
 	if ( ! $is_new_item ) {
 		// return $pieces;
 	}
+
 	//make sure that all three fields are active
 	$fields = array( 'post_title', 'rel_klss_ssn', 'rel_sktn' );
 	foreach ( $fields as $field ) {
@@ -111,13 +112,13 @@ function bwdb_sktn_klss_ssn_title( $pieces, $is_new_item ) {
 	$rel_klss_ssn = $rel_sktn = '';
 	//get value of "rel_klss" if possible
 	if ( isset( $pieces['fields']['rel_klss_ssn'] ) && isset( $pieces['fields']['rel_klss_ssn']['value'] ) ) {
-		$rel_klss_ssn_id = current( $pieces['fields']['rel_klss_ssn']['value'] );
+		$rel_klss_ssn_id = $pieces['fields']['rel_klss_ssn']['value'];
 		$rel_klss_ssn    = get_the_title( $rel_klss_ssn_id );
 
 	}
 	//get value of "rel_ssn" if possible
 	if ( isset( $pieces['fields']['rel_sktn'] ) && isset( $pieces['fields']['rel_sktn']['value'] ) ) {
-		$rel_sktn_id = current( $pieces['fields']['rel_sktn']['value'] );
+		$rel_sktn_id = $pieces['fields']['rel_sktn']['value'];
 		$rel_sktn    = get_the_title( $rel_sktn_id );
 
 	}
@@ -125,7 +126,7 @@ function bwdb_sktn_klss_ssn_title( $pieces, $is_new_item ) {
 	//set post title using $rel_klss and $rel_ssn
 	$pieces['object_fields']['post_title']['value'] = $rel_klss_ssn . ', ' . $rel_sktn;
 
-	// wp_die( '<pre>' . $pieces['object_fields']['post_title']['value'] . '</pre>' );
+	// wp_die( '<pre>' .  current( $pieces['fields']['rel_klss_ssn']['value'] ) . ' | ' . print_bwdb( $pieces['fields']['rel_klss_ssn']['value'] ). ' | ' . $rel_sktn_id . ' | ' . $pieces['fields']['rel_sktn']['value']  . ' | ' . '</pre>' );
 
 
 	//return $pieces to save
@@ -164,7 +165,7 @@ function bwdb_set_post_title_splr( $pieces, $is_new_item ) {
 	//set post title using $rel_klss and $rel_ssn
 	$pieces['object_fields']['post_title']['value'] = $vorname . ' ' . $nachname . ' (' . $pnr . ')';
 
-	// wp_die( '<pre>' . $pieces['object_fields']['post_title']['value'] . '</pre>' );
+	// wp_die( '<pre>' . print_bwdb( $pieces['fields']) . '</pre>' );
 
 
 	//return $pieces to save
@@ -174,10 +175,56 @@ function bwdb_set_post_title_splr( $pieces, $is_new_item ) {
 add_filter( 'pods_api_pre_save_pod_item_splr', 'bwdb_set_post_title_splr', 10, 2 );
 
 
+// alternativ for List View - https://github.com/pods-framework/pods/issues/5119
+// @todo: überprüfen namen optimieren & ins forum posten mit referenz auf original post ... https://github.com/pods-framework/pods/issues/1240
+// zwei Versionen - 2te ev doch besser ?
+/**
+ * @param $data
+ * @param $name
+ * @param $value
+ * @param $options
+ * @param $pod
+ * @param $id
+ *
+ * @return mixed
+ */
+function bwdb_pods_field_pick_data( $data, $name, $value, $options, $pod, $id ) {
+
+	// wp_die( '<pre>' . print_bwdb( $data ) . '</pre>' );
+
+	// print_bwdb($name);
+	// print_bwdb($value);
+	if ( in_array( $name, array( 'pods_meta_rel_sktn', 'pods_meta_dropdown', 'pods_meta_radio', 'pods_meta_autocomplete', 'pods_meta_list_view' ) ) ) {
+
+		$pod = pods( 'sktn', array(
+			'limit'      => - 1,
+			'expires'    => "DAY_IN_SECONDS",
+			'cache_mode' => "transient"
+		) );
+
+		if ( 0 < $pod->total() ) {
+			while ( $pod->fetch() ) {
+				$rel_bwrb = $pod->display( 'rel_bwrb' );
+				if ( $data[ $pod->id() ] ) {
+					$data[ $pod->id() ] .= ' - ' . $rel_bwrb;
+				}
+			}
+		}
+	}
+
+	// print_bwdb($data);
+	return $data;
+}
+
+add_filter('pods_field_pick_data', 'bwdb_pods_field_pick_data', 1, 6);
+// add_filter('pods_field_pick_data_ajax_items', 'bwdb_pods_field_pick_data', 1, 6);
+// add_filter('pods_field_dfv_data', 'bwdb_pods_field_pick_data', 1, 6);
+
+
 // Gravity Forms
 // an “isSelected” property (which is used to indicate whether the option is currently selected or not)
 // https://docs.gravityforms.com/dynamically-populating-drop-down-fields/
-
+// https://docs.gravityforms.com/gform_chained_selects_input_choices/  for extend to allo ssn / klss_ssn / ...
 
 add_filter( 'gform_pre_render', 'populate_sktn' );
 add_filter( 'gform_pre_validation', 'populate_sktn' );
@@ -198,10 +245,22 @@ function populate_sktn( $form ) {
 		// more info: http://codex.wordpress.org/Template_Tags/get_posts
 		$posts = get_posts( 'numberposts=-1&post_status=publish&post_type=sktn_klss_ssn' );
 
+
+		//@todo make dynamic ( get latests post of ssn -> ID or add a settings page for it! ) and maybe add chained selects -> klss
+		$ssn_id = '189555';
 		$choices = array();
 
-		foreach ( $posts as $post ) {
-			$choices[] = array( 'text' => $post->post_title, 'value' => $post->ID, 'isSelected' => '0' );
+		$pod = pods( 'sktn_klss_ssn', array(
+			'expires'    => "DAY_IN_SECONDS",
+			'cache_mode' => "transient",
+			'where'      => "rel_klss_ssn.rel_ssn.ID = $ssn_id",
+			'limit'      => "-1",
+		) );
+
+		if ( 0 < $pod->total() ) {
+			while ( $pod->fetch() ) {
+				$choices[] = array( 'text' => $pod->field('post_title'), 'value' => $pod->field('ID'), 'isSelected' => '0' );
+			}
 		}
 
 		// update 'Select a Post' to whatever you'd like the instructive option to be
@@ -212,7 +271,10 @@ function populate_sktn( $form ) {
 
 	return $form;
 
-}// Gravity Forms
+}
+
+
+// Gravity Forms
 add_filter( 'gform_pre_render_1', 'populate_splr' );
 add_filter( 'gform_pre_validation_1', 'populate_splr' );
 add_filter( 'gform_pre_submission_filter_1', 'populate_splr' );
@@ -227,17 +289,23 @@ function populate_splr( $form ) {
 		}
 
 
-		$_POST['sktn_id'];
-
+		// $_POST['sktn_id'];
 		// $name = 'sktn_id'
 		// you can add additional parameters here to alter the posts that are retrieved
 		// more info: http://codex.wordpress.org/Template_Tags/get_posts
+		$sktn_id = $_GET['sktn_id']; // @todo: ABSICHERN !!!! optimieren ...
+
+
+
+		$sktn_id = pods_v_sanitized( 'sktn_id', 'get', '');
+
+
 		$posts = get_posts( array(
 				'numberposts' => - 1,
 				'post_status' => 'publish',
 				'post_type'   => 'splr',
 				'meta_key'    => 'rel_sktn_klss_ssn',
-				'meta_value'  => $_GET['sktn_id'], // @todo: ABSICHERN !!!! optimieren ...
+				'meta_value'  => $sktn_id,
 			)
 		);
 
@@ -268,11 +336,16 @@ function access_entry_via_field( $entry, $form ) {
 		'rel_sktn_klss_ssn' => rgar( $entry, '13' ),
 		'datum'             => rgar( $entry, '5' ),
 		'runde'             => rgar( $entry, '1' ),
-		'nummer'            => '1',
-		'ergebnis'          => rgar( $entry, '2' ),
+		'nummer'            => '',
+		'ergebnis'          => '',
 		'reserve'           => rgar( $entry, '17' ),
 	);
 
+
+
+	// Spiel 1
+	$fields['nummer']   = '1';
+	$fields['ergebnis'] = rgar( $entry, '2' );
 	if ( ! empty( $fields['ergebnis'] ) ) {
 		$new[] = $pod->add( $fields );
 	}
@@ -291,6 +364,30 @@ function access_entry_via_field( $entry, $form ) {
 	if ( ! empty( $fields['ergebnis'] ) ) {
 		$new[] = $pod->add( $fields );
 	}
+
+	// Spiel 4
+	$fields['nummer']   = '4';
+	$fields['ergebnis'] = rgar( $entry, '31' );
+
+	if ( ! empty( $fields['ergebnis'] ) ) {
+		$new[] = $pod->add( $fields );
+	}
+	// Spiel 5
+	$fields['nummer']   = '5';
+	$fields['ergebnis'] = rgar( $entry, '30' );
+
+	if ( ! empty( $fields['ergebnis'] ) ) {
+		$new[] = $pod->add( $fields );
+	}
+
+	// Spiel 6
+	$fields['nummer']   = '6';
+	$fields['ergebnis'] = rgar( $entry, '29' );
+
+	if ( ! empty( $fields['ergebnis'] ) ) {
+		$new[] = $pod->add( $fields );
+	}
+
 
 
 	//$data = print_bwdb( $entry ) . print_bwdb( $form );
