@@ -993,13 +993,16 @@ function bwdb_get_data( $attr ) {
 
 	// für Schnitt Berechnung
 	if ( ! empty( $attr['single'] ) ) {
+		// @todo use get_post_meta or pods to get from pod "spiel" (post_type: _pods_pod ) the rel_splr field ID (post_type: _pods_field  post_parent = ID from _pods_pod for spiel )
+		$rel_rel_splr = "189242";
+		$bwrb_id      = "189689, 189572, 189560";
 
 		$calculations = "	    SUM(ergebnis) AS pins,
 								MAX(ergebnis) AS hsp,
 								MIN(ergebnis) AS minspl,
 								(MAX(ergebnis)-MIN(ergebnis)) AS diffspl,
 								COUNT(ergebnis) AS anzahl,
-								COUNT( CASE WHEN rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN (121775) THEN ergebnis END) AS anz_allevent,
+								COUNT( CASE WHEN rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN ($bwrb_id) THEN ergebnis END) AS anz_allevent,
 								ROUND(AVG(ergebnis),3) AS schnitt,
 								ROUND(((MAX(ergebnis)/AVG(ergebnis)*100)-100),2) AS avgmaxspl,
 								ROUND(((MIN(ergebnis)/AVG(ergebnis)*100)-100),2) AS avgminspl,
@@ -1009,7 +1012,7 @@ function bwdb_get_data( $attr ) {
 		$join = "   INNER JOIN (    SELECT h.splr_id, MAX(h.ser) as hser
                                     FROM (  SELECT `rel_splr`.`ID` as splr_id, SUM(d.ergebnis) AS ser
                                             FROM `bewp_posts` AS `t`
-                                            LEFT JOIN `bewp_podsrel` AS `rel_rel_splr` ON `rel_rel_splr`.`field_id` = 121826 AND `rel_rel_splr`.`item_id` = `t`.`ID`
+                                            LEFT JOIN `bewp_podsrel` AS `rel_rel_splr` ON `rel_rel_splr`.`field_id` = $rel_rel_splr AND `rel_rel_splr`.`item_id` = `t`.`ID`
                                             LEFT JOIN `bewp_posts` AS `rel_splr` ON `rel_splr`.`ID` = `rel_rel_splr`.`related_item_id`
                                             LEFT JOIN `bewp_pods_spl` AS `d` ON `d`.`id` = `t`.`ID`
                                             WHERE ( ( `t`.`post_status` IN ( 'publish' ) ) AND ( `t`.`post_type` = 'spl' ) )
@@ -1021,7 +1024,7 @@ function bwdb_get_data( $attr ) {
 	}
 
 	if ( ! empty( $attr['team'] ) ) {
-
+		$rel_rel_skt_kss_ssn = "189243"; //@todo see $rel_rel_splr
 
 		$sub_where = "reserve = 0";
 		if ( ! empty( $runde ) ) {
@@ -1035,16 +1038,16 @@ function bwdb_get_data( $attr ) {
 								MAX(calc.serie) AS hser,
 								";
 
-		$join = '   INNER JOIN (    SELECT h.*, MAX(h.spl) as hspl, SUM(spl) as serie
+		$join = "   INNER JOIN (    SELECT h.*, MAX(h.spl) as hspl, SUM(spl) as serie
                                     FROM (  SELECT `rel_sktn_klss_ssn`.`ID` as sktn_klss_ssn_id, runde, SUM(ergebnis) AS spl, nummer
                                             FROM `bewp_posts` AS `t`
-                                            LEFT JOIN `bewp_podsrel` AS `rel_rel_sktn_klss_ssn` ON `rel_rel_sktn_klss_ssn`.`field_id` = 122016 AND `rel_rel_sktn_klss_ssn`.`item_id` = `t`.`ID` 
+                                            LEFT JOIN `bewp_podsrel` AS `rel_rel_sktn_klss_ssn` ON `rel_rel_sktn_klss_ssn`.`field_id` = $rel_rel_skt_kss_ssn AND `rel_rel_sktn_klss_ssn`.`item_id` = `t`.`ID` 
                                             LEFT JOIN `bewp_posts` AS `rel_sktn_klss_ssn` ON `rel_sktn_klss_ssn`.`ID` = `rel_rel_sktn_klss_ssn`.`related_item_id` 
                                             LEFT JOIN `bewp_pods_spl` AS `d` ON `d`.`id` = `t`.`ID` 
-                                            WHERE ( ( ' . $sub_where . ' AND `t`.`post_status` IN ( "publish" ) ) AND ( `t`.`post_type` = "spl" ) )
+                                            WHERE ( ( $sub_where AND `t`.`post_status` IN ( 'publish' ) ) AND ( `t`.`post_type` = 'spl' ) )
                                             GROUP BY runde, nummer, sktn_klss_ssn_id
                                             ORDER BY `t`.`menu_order`, `t`.`post_title`, `t`.`post_date`) AS h
-                                    GROUP BY h.sktn_klss_ssn_id, runde) AS calc ON calc.sktn_klss_ssn_id = `rel_sktn_klss_ssn`.`ID` AND calc.runde = d.runde';
+                                    GROUP BY h.sktn_klss_ssn_id, runde) AS calc ON calc.sktn_klss_ssn_id = `rel_sktn_klss_ssn`.`ID` AND calc.runde = d.runde";
 
 		$groupby = 'sktn_klss_ssn_id';
 	}
