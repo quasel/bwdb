@@ -3,6 +3,9 @@
 function bwdbShowAvg( $attr ) {
 // @todo:  $attr durchgängi nutzen nicht mal aus dem Request und mal so möglich?
 
+
+	// @todo Take a look at pods_query_arg()
+
 	// home_url() = $_SERVER['REQUEST'];
 	// home_url() = home_url();
 
@@ -10,18 +13,41 @@ function bwdbShowAvg( $attr ) {
 		$attr['ssn_id'] = $_REQUEST['ssn_id'];
 	}
 
-	/*	// Ausgabe der Saisonen in einer ul - die aktuelle Saison erhält die klasse: active
+	if ( 'best_off_hspl' == $attr['output'] || 'best_off_hser' == $attr['output'] ) {
+		// do stuff
+	} else {
+		/*	    global $wp;
+				$current_url = home_url( add_query_arg( array(), $wp->request ) );
+				$current_url = get_permalink();
+				// Anzeige aller Städte
+				$vereine = bwdb_get_data( array( 'output' => 'verein' ) );
+				$verein  = "";
+
+				foreach ( $vereine as $vrn ) {
+					$link   = $current_url; //reset
+					$link   = add_query_arg( array(
+						'show'   => 'verein',
+						'vrn_id' => $vrn->vrn_id,
+						'ssn_id' => $attr['ssn_id']
+					), $link );
+					$verein .= sprintf( '<li class="menu-item"><a href="%1$s" title="%3$s">%3$s</a></li>',
+						$link,
+						$vrn->vrn_id,
+						$vrn->verein
+					);
+				}*/
+		// Ausgabe der Saisonen in einer ul - die aktuelle Saison erhält die klasse: active
 		echo '<div class="bwdb_saison saison"><ul class="bwdb_saison saison">';
 
 		$saison = bwdb_get_data( array( 'output' => 'saison', 'orderby' => 'ssn_id DESC' ) );
-		foreach ( $saison as $saison ) {
-			if ( ! isset( $attr['ssn_id'] ) ) {
-				$attr['ssn_id'] = $saison->ssn_id;
+		foreach ( $saison as $ssn ) {
+			if ( empty( $attr['ssn_id'] ) ) {
+				$attr['ssn_id'] = $ssn->ssn_id; // if not set use the last added one!
 			}
 			$link = $_SERVER['REQUEST']; //reset
-			$link = add_query_arg( 'ssn_id', $saison->ssn_id );
+			$link = add_query_arg( 'ssn_id', $ssn->ssn_id );
 
-			if ( $attr['ssn_id'] == $saison->ssn_id ) {
+			if ( $attr['ssn_id'] == $ssn->ssn_id ) {
 				$class = 'class="active"';
 			} else {
 				$class = '';
@@ -29,67 +55,96 @@ function bwdbShowAvg( $attr ) {
 
 			$asktn_klss_ssn = sprintf( '<li %4$s><a href="%1$s" title="%2$s">%3$s</a></li>',
 				$link,
-				$saison->saison,
-				$saison->saison,
+				$ssn->saison,
+				$ssn->saison,
 				$class );
 
 			echo $asktn_klss_ssn;
 		}
-		echo '</ul></div>';*/
+		echo '</ul></div>';
 
-
-	if ( 'best_off_hspl' == $attr['output'] || 'best_off_hser' == $attr['output'] ) {
-		// do stuff
-
-	} else {
-	    global $wp;
-        $current_url = home_url( add_query_arg( array(), $wp->request ) );
-        $current_url = get_permalink();
-		// Anzeige aller Städte
-		$vereine = bwdb_get_data( array( 'output' => 'verein' ) );
-		$verein  = "";
-
-		foreach ( $vereine as $vrn ) {
-			$link   = $current_url; //reset
-			$link   = add_query_arg( array(
-				'show'   => 'verein',
-				'vrn_id' => $vrn->vrn_id,
-				'ssn_id' => $attr['ssn_id']
-			), $link );
-			$verein .= sprintf( '<li class="menu-item"><a href="%1$s" title="%3$s">%3$s</a></li>',
-				$link,
-				$vrn->vrn_id,
-				$vrn->verein
-			);
-		}
 		echo "<nav id='bwdb-menu-verein'><ul class='nav-menu'>$verein</ul></nav>";
-
+		$current_url = get_permalink();
 		?>
         <nav id="bwdb-menu">
-            <ul class="nav-menu">
-                <li class="menu-item">
-                    <a href="<?php echo add_query_arg( array(
-						'show'    => 'klss_ssn',
-						'klss_id' => '',
-						'ssn_id'  => $attr['ssn_id']
-					), $current_url ); ?>">Teams</a>
-                </li>
+            <ul class="nav-menu bwdb_schnitt saison">
                 <li class="menu-item">
                     <a href="<?php echo add_query_arg( array(
 						'show'   => 'schnitt',
 						'sex'    => '0',
 						'ssn_id' => $attr['ssn_id']
-					), $current_url ); ?>">Women</a>
-                </li class="menu-item">
-                <li>
+					), $current_url ); ?>">Damen</a>
+                </li>
+                <li class="menu-item">
                     <a href="<?php echo add_query_arg( array(
 						'show'   => 'schnitt',
 						'sex'    => '1',
 						'ssn_id' => $attr['ssn_id']
-					), $current_url ); ?>">Men</a>
-                </li class="menu-item">
+					), $current_url ); ?>">Herren</a>
+                </li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'   => 'allevent',
+						'sex'    => '0',
+						'min'    => '21',
+						'ssn_id' => $attr['ssn_id']
+					), $current_url ); ?>">All-Event Damen</a>
+                </li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'   => 'allevent',
+						'sex'    => '1',
+						'min'    => '21',
+						'ssn_id' => $attr['ssn_id']
+					), $current_url ); ?>">All-Event Herren</a>
+                </li>
+            </ul>
+            <ul class="nav-menu bwdb_bewerbe saison">
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'    => 'klss_ssn',
+						'klss_id' => '189565,189567,189569',
+						'ssn_id'  => $attr['ssn_id']
+					), $current_url ); ?>">4er
+                        Gesamt</a></li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'    => 'klss_ssn',
+						'klss_id' => '189565',
+						'ssn_id'  => $attr['ssn_id']
+					), $current_url ); ?>">4er
+                        Gruppe A</a></li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'    => 'klss_ssn',
+						'klss_id' => '189567',
+						'ssn_id'  => $attr['ssn_id']
+					), $current_url ); ?>">4er
+                        Gruppe B</a></li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'    => 'klss_ssn',
+						'klss_id' => '189569',
+						'ssn_id'  => $attr['ssn_id']
+					), $current_url ); ?>">4er
+                        Gruppe C</a></li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'    => 'klss_ssn',
+						'klss_id' => '189575',
+						'ssn_id'  => $attr['ssn_id']
+					), $current_url ); ?>">Damen-Doppel</a>
+                </li>
+                <li class="menu-item">
+                    <a href="<?php echo add_query_arg( array(
+						'show'    => 'klss_ssn',
+						'klss_id' => '189580',
+						'ssn_id'  => $attr['ssn_id']
+					), $current_url ); ?>">Mix-Doppel</a>
+                </li>
             </ul>
         </nav>
+
 		<?php
 	}
 	$show = $attr['show'];
@@ -216,12 +271,12 @@ function bwdbShowAvgList( $attr ) {
     </tbody>
 
 	<?php
-	$allevent = $attr['min'];
-	$k        = 0;
+	$allevent    = $attr['min'];
+	$k           = 0;
 	$current_url = get_permalink();
 
 
-	foreach ( $schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
+	foreach ( (array)$schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
 		if ( $schnitt->anz_allevent >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
 			$k ++;
 			?>
@@ -377,7 +432,7 @@ function bwdbShowSktnList( $attr ) {
 
 			<?php
 
-			$k = 0;
+			$k           = 0;
 			$current_url = get_permalink();
 
 
@@ -477,7 +532,7 @@ function bwdbShowVrnList( $attr ) {
         </tbody>
 
 		<?php
-		$k = 0;
+		$k           = 0;
 		$current_url = get_permalink();
 
 		foreach ( $data as $team ) {
@@ -1405,6 +1460,8 @@ function bwdb_get_data( $attr ) {
 		echo $pods_object->field( 'vorname');
 		print_bwdb( $pods_object->field( 'meta_value') );*/
 
+	$result = array();
+
 	if ( $pods_object ) {
 		$result = $pods_object->data();
 	}
@@ -1416,12 +1473,12 @@ function bwdb_get_data( $attr ) {
 	}
 
 	if ( true == $debug && current_user_can( 'manage_options' ) ) {
-		print_bwdb( $attr, 'Attr' );
-		print_bwdb( $params, 'Params' );
+		// print_bwdb( $attr, 'Attr' );
+		// print_bwdb( $params, 'Params' );
 		// print_bwdb( $pod_name, 'Pod' );
 
-		$wpdb->print_error;
-		print_bwdb( $wpdb->last_query, 'Query' );
+		// $wpdb->print_error;
+		// print_bwdb( $wpdb->last_query, 'Query' );
 
 		if ( $pods_object ) {
 			print_bwdb( array_keys( $pods_object->fields() ), 'Fields' );
