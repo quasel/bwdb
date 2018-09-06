@@ -10,8 +10,12 @@ function bwdbShowAvg( $attr ) {
 	// home_url() = home_url();
 
 	if ( ! isset( $attr['ssn_id'] ) ) {
-		$attr['ssn_id'] = $_REQUEST['ssn_id'];
+		$attr['ssn_id'] = pods_v_sanitized( 'ssn_id', 'request', '');
 	}
+	if ( ! isset( $attr['sex'] ) ) {
+		$attr['sex'] = pods_v_sanitized( 'sex', 'request', '');
+	}
+
 
 	if ( 'best_off_hspl' == $attr['output'] || 'best_off_hser' == $attr['output'] ) {
 		// do stuff
@@ -35,7 +39,9 @@ function bwdbShowAvg( $attr ) {
 						$vrn->vrn_id,
 						$vrn->verein
 					);
-				}*/
+				}
+		        echo "<nav id='bwdb-menu-verein'><ul class='nav-menu'>$verein</ul></nav>";
+		*/
 		// Ausgabe der Saisonen in einer ul - die aktuelle Saison erhält die klasse: active
 		echo '<div class="bwdb_saison saison"><ul class="bwdb_saison saison">';
 
@@ -44,7 +50,6 @@ function bwdbShowAvg( $attr ) {
 			if ( empty( $attr['ssn_id'] ) ) {
 				$attr['ssn_id'] = $ssn->ssn_id; // if not set use the last added one!
 			}
-			$link = $_SERVER['REQUEST']; //reset
 			$link = add_query_arg( 'ssn_id', $ssn->ssn_id );
 
 			if ( $attr['ssn_id'] == $ssn->ssn_id ) {
@@ -63,7 +68,6 @@ function bwdbShowAvg( $attr ) {
 		}
 		echo '</ul></div>';
 
-		echo "<nav id='bwdb-menu-verein'><ul class='nav-menu'>$verein</ul></nav>";
 		$current_url = get_permalink();
 		?>
         <nav id="bwdb-menu">
@@ -184,7 +188,7 @@ function bwdbShowAvg( $attr ) {
 				// $attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
 			}
 			if ( empty( $attr['title'] ) ) {
-				switch ( $_REQUEST['sex'] ) {
+				switch ( $attr['sex'] ) {
 					case '0':
 						$attr['title'] = "Schnittliste Damen";
 						break;
@@ -289,12 +293,9 @@ function bwdbShowAvgList( $attr ) {
 						'splr_id' => $schnitt->splr_id,
 						'ssn_id'  => $attr['ssn_id']
 					), $link );
-					$aspieler = sprintf( '<a href="%1$s" title="%5$s">%3$s %4$s</a>',
+					$aspieler = sprintf( '<a href="%1$s" title="%2$s">%2$s</a>',
 						$link,
-						$schnitt->splr_id,
-						$schnitt->vorname,
-						$schnitt->nachname,
-						$schnitt->sktn_list );
+						$schnitt->nachname);
 					echo $aspieler; ?></td>
                 <td align="left"><?php
 					$link    = $current_url; //reset
@@ -917,6 +918,11 @@ function bwdb_get_data( $attr ) {
 	// @todo is_numeric
 
 	$where = '';
+	$join = '';
+	$groupby = '';
+	$calculations = '';
+
+
 
 	if ( ! empty( $bwrb_id ) ) {
 		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN ($bwrb_id)";
@@ -957,65 +963,6 @@ function bwdb_get_data( $attr ) {
 		$where .= "  AND reserve = $reserve";
 	}
 
-
-	// If a search pattern is specified, load the posts that match
-	$search = '';
-	if ( ! empty( $attr['s'] ) ) {
-		// added slashes screw with quote grouping when done early, so done later
-		$attr['s'] = stripslashes( $attr['s'] );
-		if ( ! empty( $attr['sentence'] ) ) {
-			$attr['search_terms'] = array( $attr['s'] );
-		} else {
-			preg_match_all( '/".*?("|$)|((?<=[\r\n\t ",+])|^)[^\r\n\t ",+]+/', $attr['s'], $matches );
-			$attr['search_terms'] = array_map( '_search_terms_tidy', $matches[0] );
-		}
-		$n         = ! empty( $attr['exact'] ) ? '' : '%';
-		$searchand = '';
-		foreach ( (array) $attr['search_terms'] as $term ) {
-			$term = esc_sql( like_escape( $term ) );
-			// example $search .= "{$searchand}((s.sktn_klss_ssn_id LIKE '{$n}{$term}{$n}') OR (p.splr_id LIKE '{$n}{$term}{$n}'))";
-			$search    .= "{$searchand}((p.nachname LIKE '{$n}{$term}{$n}') OR  (p.vorname LIKE '{$n}{$term}{$n}') OR (p.splr_id LIKE '{$n}{$term}{$n}'))";
-			$searchand = ' AND ';
-		}
-
-		if ( ! empty( $search ) ) {
-			$search = " AND ({$search}) ";
-			// @todo - amcht das sinn für uns ?
-			if ( ! is_user_logged_in() ) {
-				$search .= " AND ($wpdb->posts.post_password = '') ";
-			}
-		}
-		$where .= $search;
-	}
-
-	// siehe query.php ^^ nach Jahr und Monat suchen
-	if ( ! empty( $attr['m'] ) ) {
-		$where .= " AND YEAR(rel_spl.date)=" . substr( $attr['m'], 0, 4 );
-		$where .= " AND MONTH(rel_spl.date)=" . substr( $attr['m'], 4, 2 );
-	}
-
-
-	// Pagination
-	// Paging wieder mal geklaut aus der query.php
-	if ( empty( $attr['nopaging'] ) ) {
-		$page = absint( $attr['paged'] );
-		if ( ! $page ) {
-			$page = 1;
-		}
-
-		if ( empty( $attr['offset'] ) ) {
-			$pgstrt = ( $page - 1 ) * $attr['posts_per_page'] . ', ';
-		} else { // we're ignoring $page and using 'offset'
-			$attr['offset'] = absint( $attr['offset'] );
-			$pgstrt         = $attr['offset'] . ', ';
-		}
-		$limits = 'LIMIT ' . $pgstrt . $attr['posts_per_page'];
-	}
-
-	$found_rows = '';
-	if ( ! $attr['no_found_rows'] && ! empty( $limits ) ) {
-		$found_rows = 'SQL_CALC_FOUND_ROWS';
-	}
 
 
 	$fields = "	    rel_splr.ID as splr_id,
