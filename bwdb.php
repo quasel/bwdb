@@ -135,6 +135,13 @@ function bwdb_sktn_klss_ssn_title( $pieces, $is_new_item ) {
 
 add_filter( 'pods_api_pre_save_pod_item_sktn_klss_ssn', 'bwdb_sktn_klss_ssn_title', 10, 2 );
 
+// add_filter( 'pods_api_save_pod_item_track_changed_fields_splr', '__return_true');
+// add_filter( 'pods_api_save_pod_item_track_changed_fields_splr', 'bwdb_test', 10, 2 );
+function bwdb_test($track, $params) {
+	wp_die( var_dump( $track ), print_bwdb( $params ) );
+	return true;
+}
+
 function bwdb_set_post_title_splr( $pieces, $is_new_item ) {
 	//make sure that all three fields are active
 	$fields = array( 'post_title' );
@@ -144,30 +151,39 @@ function bwdb_set_post_title_splr( $pieces, $is_new_item ) {
 		}
 	}
 
+	//This line allows it to target only the Pod called 'cpt'.
+	//For all Pods use:  $PodsAPI = pods_api();
+	// $changes = PodsAPI::handle_changed_fields( $pieces['params']->pod, $pieces['params']->id, 'get' );
+	// wp_die( '<pre>' . print_bwdb( $pieces ) . $pieces['params']->pod . $pieces['params']->id . '</pre>' );
+	// $pieces['changed_fields'] with add_filter( 'pods_api_save_pod_item_track_changed_fields_splr', '__return_true');
+
 	//set variables for fields empty first for saftey's sake
-	$vorname = $nachname = $pnr = '';
+	$nachname = $vorname = $pnr = '';
+
+	if ( ! $is_new_item ) {
+		$pod     = pods( $pieces['params']->pod, $pieces['params']->id );
+		$vorname  = $pod->field( 'vorname' );
+		$nachname = $pod->field( 'nachname' );
+		$pnr      = $pod->field( 'pnr' );
+	}
+
 	//get value of "rel_klss" if possible
 	if ( isset( $pieces['fields']['vorname'] ) && isset( $pieces['fields']['vorname']['value'] ) ) {
 		$vorname = $pieces['fields']['vorname']['value'];
-
 	}
 	//get value of "rel_ssn" if possible
 	if ( isset( $pieces['fields']['nachname'] ) && isset( $pieces['fields']['nachname']['value'] ) ) {
 		$nachname = $pieces['fields']['nachname']['value'];
-
 	}
 	//get value of "rel_ssn" if possible
 	if ( isset( $pieces['fields']['pnr'] ) && isset( $pieces['fields']['pnr']['value'] ) ) {
 		$pnr = $pieces['fields']['pnr']['value'];
-
 	}
 
-	//set post title using $rel_klss and $rel_ssn
-	$pieces['object_fields']['post_title']['value'] = $vorname . ' ' . $nachname . ' (' . $pnr . ')';
+	$post_title = $vorname . ' ' . $nachname . ' (' . $pnr . ')';
+	$pieces['object_fields']['post_title']['value'] = $post_title;
 
 	// wp_die( '<pre>' . print_bwdb( $pieces['fields']) . '</pre>' );
-
-
 	//return $pieces to save
 	return $pieces;
 }
@@ -224,7 +240,7 @@ add_filter('pods_field_pick_data', 'bwdb_pods_field_pick_data', 1, 6);
 // Gravity Forms
 // an “isSelected” property (which is used to indicate whether the option is currently selected or not)
 // https://docs.gravityforms.com/dynamically-populating-drop-down-fields/
-// https://docs.gravityforms.com/gform_chained_selects_input_choices/  for extend to allo ssn / klss_ssn / ...
+// https://docs.gravityforms.com/gform_chained_selects_input_choices/  for extend to allow ssn / klss_ssn / ...
 
 add_filter( 'gform_pre_render', 'populate_sktn' );
 add_filter( 'gform_pre_validation', 'populate_sktn' );

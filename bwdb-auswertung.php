@@ -9,14 +9,6 @@ function bwdbShowAvg( $attr ) {
 	// home_url() = $_SERVER['REQUEST'];
 	// home_url() = home_url();
 
-	if ( ! isset( $attr['ssn_id'] ) ) {
-		$attr['ssn_id'] = pods_v_sanitized( 'ssn_id', 'request', '');
-	}
-	if ( ! isset( $attr['sex'] ) ) {
-		$attr['sex'] = pods_v_sanitized( 'sex', 'request', '');
-	}
-
-
 	if ( 'best_off_hspl' == $attr['output'] || 'best_off_hser' == $attr['output'] ) {
 		// do stuff
 	} else {
@@ -68,7 +60,8 @@ function bwdbShowAvg( $attr ) {
 		}
 		echo '</ul></div>';
 
-		$current_url = get_permalink();
+		// $current_url = get_permalink();
+		$current_url = "/ergebnisse/";
 		?>
         <nav id="bwdb-menu">
             <ul class="nav-menu bwdb_schnitt saison">
@@ -181,12 +174,6 @@ function bwdbShowAvg( $attr ) {
 			bwdbShowBest( $attr );
 			break;
 		case "schnitt":
-			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
-			if ( $attr['ssn_id'] < 4 ) {
-				$attr['bwrb_id'] = '1'; // bis Saison 2014/15 für Schnittliste nur TN aus 4er
-			} else {
-				// $attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
-			}
 			if ( empty( $attr['title'] ) ) {
 				switch ( $attr['sex'] ) {
 					case '0':
@@ -203,14 +190,9 @@ function bwdbShowAvg( $attr ) {
 			bwdbShowAvgList( $attr );
 			break;
 		case "allevent":
-			// nur für Betriebsliga - Sonderheit ... @todo eleganter lösen !!!!
-			if ( $attr['ssn_id'] < 4 ) {
-				$attr['bwrb_id'] = '1'; // bis Saison 2014/15 für Schnittliste nur TN aus 4er
-			} else {
-				$attr['bwrb_id'] = '1,2,3'; // ab Saison 2015/16 für Schnittliste  TN aus 2er,4er
-			}
+		    $attr['min'] = 21; // Mindestspiele für All Event Liste
 			if ( empty( $attr['title'] ) ) {
-				switch ( $_REQUEST['sex'] ) {
+				switch ( $attr['sex'] ) {
 					case '0':
 						$attr['title'] = "All-Event Damen";
 						break;
@@ -277,7 +259,8 @@ function bwdbShowAvgList( $attr ) {
 	<?php
 	$allevent    = $attr['min'];
 	$k           = 0;
-	$current_url = get_permalink();
+	// $current_url = get_permalink();
+		$current_url = "/ergebnisse/";
 
 
 	foreach ( (array)$schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
@@ -396,8 +379,8 @@ function bwdbShowSktnList( $attr ) {
 	}
 
 
-	if ( ! empty( $_REQUEST['klss_id'] ) ) {
-		$klss_id = $_REQUEST['klss_id'];
+	if ( ! empty( $attr['klss_id'] ) ) {
+		$klss_id = $attr['klss_id'];
 		$klasse  = bwdb_get_data( array( 'output' => 'klasse', 'klss_id' => $klss_id ) );
 
 		foreach ( $klasse as $klss ) {
@@ -431,48 +414,50 @@ function bwdbShowSktnList( $attr ) {
             </thead>
             </tbody>
 
-			<?php
+	        <?php
 
-			$k           = 0;
-			$current_url = get_permalink();
+	        $k           = 0;
+	        // $current_url = get_permalink();
+		$current_url = "/ergebnisse/";
 
-
-			foreach ( $data as $team ) {
-				$k ++;    // Schleife Ausgabe Team
-				?>
-                <tr>
-                    <td align="right"><?php echo $k; ?></td>
-                    <td align="left">    <?php
-						$link           = $current_url; //reset
-						$link           = add_query_arg( array(
-							'show'    => 'sktn_klss_ssn',
-							'sktn_id' => $team->sktn_id,
-							'ssn_id'  => $attr['ssn_id']
-						), $link );
-						$asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-							$link,
-							$team->sktn_klss_ssn_id,
-							$team->sektion );
-						echo $asktn_klss_ssn; ?></td>
-                    <td align="left">    <?php
-						$link   = $current_url; //reset
-						$link   = add_query_arg( array(
-							'show'   => 'verein',
-							'vrn_id' => $team->vrn_id,
-							'ssn_id' => $attr['ssn_id']
-						), $link );
-						$verein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-							$link,
-							$team->vrn_id,
-							$team->verein );
-						echo $verein; ?></td>
-                    <td align="right"><?php echo $team->pins ?></td>
-                    <td align="right"><?php echo $team->anzahl ?></td>
-                    <td align="right"><?php echo $team->hsp ?></td>
-                    <td align="right"><?php echo $team->hser ?></td>
-                    <td align="right"><?php echo $team->schnitt ?></td>
-                </tr>
-			<?php } ?>
+	        if ( isset( $data ) ) {
+		        foreach ( $data as $team ) {
+			        $k ++;    // Schleife Ausgabe Team
+			        ?>
+                    <tr>
+                        <td align="right"><?php echo $k; ?></td>
+                        <td align="left">    <?php
+					        $link           = $current_url; //reset
+					        $link           = add_query_arg( array(
+						        'show'    => 'sktn_klss_ssn',
+						        'sktn_id' => $team->sktn_id,
+						        'ssn_id'  => $attr['ssn_id']
+					        ), $link );
+					        $asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+						        $link,
+						        $team->sktn_klss_ssn_id,
+						        $team->sektion );
+					        echo $asktn_klss_ssn; ?></td>
+                        <td align="left">    <?php
+					        $link   = $current_url; //reset
+					        $link   = add_query_arg( array(
+						        'show'   => 'verein',
+						        'vrn_id' => $team->vrn_id,
+						        'ssn_id' => $attr['ssn_id']
+					        ), $link );
+					        $verein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+						        $link,
+						        $team->vrn_id,
+						        $team->verein );
+					        echo $verein; ?></td>
+                        <td align="right"><?php echo $team->pins ?></td>
+                        <td align="right"><?php echo $team->anzahl ?></td>
+                        <td align="right"><?php echo $team->hsp ?></td>
+                        <td align="right"><?php echo $team->hser ?></td>
+                        <td align="right"><?php echo $team->schnitt ?></td>
+                    </tr>
+		        <?php }
+	        } ?>
             </tbody>
         </table>
     </div>
@@ -504,8 +489,8 @@ function bwdbShowVrnList( $attr ) {
 		echo '<hr>';
 	}
 
-	if ( ! empty( $_REQUEST['klss_id'] ) ) {
-		$klss_id = $_REQUEST['klss_id'];
+	if ( ! empty( $attr['klss_id'] ) ) {
+		$klss_id = $attr['klss_id'];
 		$klasse  = bwdb_get_data( array( 'output' => 'klasse', 'klss_id' => $klss_id ) );
 
 		foreach ( $klasse as $klss ) {
@@ -534,7 +519,8 @@ function bwdbShowVrnList( $attr ) {
 
 		<?php
 		$k           = 0;
-		$current_url = get_permalink();
+		// $current_url = get_permalink();
+		$current_url = "/ergebnisse/";
 
 		foreach ( $data as $team ) {
 			$k ++;    // Schleife Ausgabe Team
@@ -871,6 +857,12 @@ function bwdb_get_data( $attr ) {
 	$output  = '';
 	$limit   = '';
 
+	$where = '';
+	$join = '';
+	$groupby = '';
+	$calculations = '';
+	$orderby = '';
+
 	extract( $attr );
 
 	// Überprüfen ...
@@ -917,13 +909,6 @@ function bwdb_get_data( $attr ) {
 	// WHERE Abfrage basteln 1=1 damit man sich über AND keine Gedanken machen muß ;)
 	// @todo is_numeric
 
-	$where = '';
-	$join = '';
-	$groupby = '';
-	$calculations = '';
-
-
-
 	if ( ! empty( $bwrb_id ) ) {
 		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN ($bwrb_id)";
 	}
@@ -962,7 +947,6 @@ function bwdb_get_data( $attr ) {
 	if ( is_numeric( $reserve ) ) {
 		$where .= "  AND reserve = $reserve";
 	}
-
 
 
 	$fields = "	    rel_splr.ID as splr_id,
@@ -1377,6 +1361,8 @@ function bwdb_get_data( $attr ) {
 			}
 			$where = '';
 		}*/
+
+
 	// Sortierung @todo
 	if ( ! empty( $where ) ) {
 		$where = ' 1=1 ' . $where;
@@ -1387,7 +1373,7 @@ function bwdb_get_data( $attr ) {
 	}
 
 
-	$select = $found_rows . ' ' . $fields . ' ' . $calculations . ' 1+1';
+	$select = $fields . ' ' . $calculations . ' 1+1';
 
 	// limit -1 für alle ...
 	$params = array(
@@ -1420,12 +1406,12 @@ function bwdb_get_data( $attr ) {
 	}
 
 	if ( true == $debug && current_user_can( 'manage_options' ) ) {
-		// print_bwdb( $attr, 'Attr' );
-		// print_bwdb( $params, 'Params' );
-		// print_bwdb( $pod_name, 'Pod' );
+		print_bwdb( $attr, 'Attr' );
+		print_bwdb( $params, 'Params' );
+		print_bwdb( $pod_name, 'Pod' );
 
 		// $wpdb->print_error;
-		// print_bwdb( $wpdb->last_query, 'Query' );
+		print_bwdb( $wpdb->last_query, 'Query' );
 
 		if ( $pods_object ) {
 			print_bwdb( array_keys( $pods_object->fields() ), 'Fields' );

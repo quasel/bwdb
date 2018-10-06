@@ -34,15 +34,18 @@ class BwDb_Shortcodes {
 	 *
 	 * @return nothing
 	 */
-	function bwdbShow( $attr = array( 'show' => 'schnitt' ), $content = '' ) {
+	function bwdbShow( $attr, $content = '' ) {
 
 
 		//zusammenführen von Attributen
 		$merged = array_merge( $attr, $_GET );
+		//sanitize
+		$merged = array_map( 'sanitize_text_field', $merged );
 
 		//Standard Werte Setzten - nicht definiertes fliegt raus ...
 		$final = shortcode_atts( array(
 			'ssn_id'           => '',
+			'bwrb_id'          => '',
 			'klss_id'          => '',
 			'klss_ssn_id'      => '',
 			'sktn_id'          => '',
@@ -52,7 +55,7 @@ class BwDb_Shortcodes {
 			'sex'              => '',
 			'reserve'          => '',
 			'min'              => '1',
-			'show'             => '',
+			'show'             => 'schnitt',
 			'runde'            => '',
 			'output'           => '',
 			'limit'            => '',
