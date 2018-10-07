@@ -1316,7 +1316,7 @@ function bwdb_get_data( $attr ) {
 
 	// Sortierung @todo
 	if ( ! empty( $where ) ) {
-		$where_string = implode( " AND ", $where );
+		$where = implode( " AND ", $where );
 	}
 
 	if ( ! is_numeric( $limit ) ) {
@@ -1330,7 +1330,7 @@ function bwdb_get_data( $attr ) {
 	$params = array(
 		'limit'   => $limit,
 		'select'  => $select,
-		'where'   => $where_string,
+		'where'   => $where,
 		'groupby' => $groupby,
 		'orderby' => $orderby,
 		'join'    => $join,
