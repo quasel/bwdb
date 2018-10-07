@@ -190,7 +190,7 @@ function bwdbShowAvg( $attr ) {
 			bwdbShowAvgList( $attr );
 			break;
 		case "allevent":
-		    $attr['min'] = 21; // Mindestspiele für All Event Liste
+			$attr['min'] = 21; // Mindestspiele für All Event Liste
 			if ( empty( $attr['title'] ) ) {
 				switch ( $attr['sex'] ) {
 					case '0':
@@ -257,13 +257,13 @@ function bwdbShowAvgList( $attr ) {
     </tbody>
 
 	<?php
-	$allevent    = $attr['min'];
-	$k           = 0;
+	$allevent = $attr['min'];
+	$k        = 0;
 	// $current_url = get_permalink();
-		$current_url = "/ergebnisse/";
+	$current_url = "/ergebnisse/";
 
 
-	foreach ( (array)$schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
+	foreach ( (array) $schnittliste as $schnitt ) {            // Schleife Ausgabe Schnittliste
 		if ( $schnitt->anz_allevent >= $allevent ) {    // Filter, wie viele Spiele notwendig sind, um in der Schnittliste aufzuscheinen.  @todo -> gehört in die Abfrage !!!!!!
 			$k ++;
 			?>
@@ -278,7 +278,7 @@ function bwdbShowAvgList( $attr ) {
 					), $link );
 					$aspieler = sprintf( '<a href="%1$s" title="%2$s">%2$s</a>',
 						$link,
-						$schnitt->nachname);
+						$schnitt->nachname );
 					echo $aspieler; ?></td>
                 <td align="left"><?php
 					$link    = $current_url; //reset
@@ -414,50 +414,50 @@ function bwdbShowSktnList( $attr ) {
             </thead>
             </tbody>
 
-	        <?php
+			<?php
 
-	        $k           = 0;
-	        // $current_url = get_permalink();
-		$current_url = "/ergebnisse/";
+			$k = 0;
+			// $current_url = get_permalink();
+			$current_url = "/ergebnisse/";
 
-	        if ( isset( $data ) ) {
-		        foreach ( $data as $team ) {
-			        $k ++;    // Schleife Ausgabe Team
-			        ?>
+			if ( isset( $data ) ) {
+				foreach ( $data as $team ) {
+					$k ++;    // Schleife Ausgabe Team
+					?>
                     <tr>
                         <td align="right"><?php echo $k; ?></td>
                         <td align="left">    <?php
-					        $link           = $current_url; //reset
-					        $link           = add_query_arg( array(
-						        'show'    => 'sktn_klss_ssn',
-						        'sktn_id' => $team->sktn_id,
-						        'ssn_id'  => $attr['ssn_id']
-					        ), $link );
-					        $asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-						        $link,
-						        $team->sktn_klss_ssn_id,
-						        $team->sektion );
-					        echo $asktn_klss_ssn; ?></td>
+							$link           = $current_url; //reset
+							$link           = add_query_arg( array(
+								'show'    => 'sktn_klss_ssn',
+								'sktn_id' => $team->sktn_id,
+								'ssn_id'  => $attr['ssn_id']
+							), $link );
+							$asktn_klss_ssn = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+								$link,
+								$team->sktn_klss_ssn_id,
+								$team->sektion );
+							echo $asktn_klss_ssn; ?></td>
                         <td align="left">    <?php
-					        $link   = $current_url; //reset
-					        $link   = add_query_arg( array(
-						        'show'   => 'verein',
-						        'vrn_id' => $team->vrn_id,
-						        'ssn_id' => $attr['ssn_id']
-					        ), $link );
-					        $verein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
-						        $link,
-						        $team->vrn_id,
-						        $team->verein );
-					        echo $verein; ?></td>
+							$link   = $current_url; //reset
+							$link   = add_query_arg( array(
+								'show'   => 'verein',
+								'vrn_id' => $team->vrn_id,
+								'ssn_id' => $attr['ssn_id']
+							), $link );
+							$verein = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+								$link,
+								$team->vrn_id,
+								$team->verein );
+							echo $verein; ?></td>
                         <td align="right"><?php echo $team->pins ?></td>
                         <td align="right"><?php echo $team->anzahl ?></td>
                         <td align="right"><?php echo $team->hsp ?></td>
                         <td align="right"><?php echo $team->hser ?></td>
                         <td align="right"><?php echo $team->schnitt ?></td>
                     </tr>
-		        <?php }
-	        } ?>
+				<?php }
+			} ?>
             </tbody>
         </table>
     </div>
@@ -518,7 +518,7 @@ function bwdbShowVrnList( $attr ) {
         </tbody>
 
 		<?php
-		$k           = 0;
+		$k = 0;
 		// $current_url = get_permalink();
 		$current_url = "/ergebnisse/";
 
@@ -573,7 +573,7 @@ function bwdbShowSpieler( $attr ) {
 
 	}
 
-	$spalten = $value->anz_spiele; // @todo
+	$spalten = 6 // @todo e.g. $value->anz_spiele;
 	?>
 
     <table id=<?php echo $attr['id']; ?> "class=" bwdb" >
@@ -857,11 +857,11 @@ function bwdb_get_data( $attr ) {
 	$output  = '';
 	$limit   = '';
 
-	$where = '';
-	$join = '';
-	$groupby = '';
+	$where        = array();
+	$join         = '';
+	$groupby      = '';
 	$calculations = '';
-	$orderby = '';
+	$orderby      = '';
 
 	extract( $attr );
 
@@ -910,53 +910,56 @@ function bwdb_get_data( $attr ) {
 	// @todo is_numeric
 
 	if ( ! empty( $bwrb_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN ($bwrb_id)";
+		$where['bwrb_id'] = "rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID IN ($bwrb_id)";
 	}
 	if ( ! empty( $klss_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.ID IN ($klss_id)";
+		$where['klss_id'] = "rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.ID IN ($klss_id)";
 	}
 	if ( ! empty( $klss_ssn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.ID IN ($klss_ssn_id)";
+		$where['klss_ssn_id'] = "rel_sktn_klss_ssn.rel_klss_ssn.ID IN ($klss_ssn_id)";
 	}
 	if ( ! empty( $sktn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_sktn.ID IN ($sktn_id)";
+		$where['sktn_id'] = "rel_sktn_klss_ssn.rel_sktn.ID IN ($sktn_id)";
 	}
 	if ( ! empty( $sktn_klss_ssn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.ID IN ($sktn_klss_ssn_id)";
+		$where['sktn_klss_ssn_id'] = "rel_sktn_klss_ssn.ID IN ($sktn_klss_ssn_id)";
 	}
 	if ( ! empty( $ssn_id ) ) {
-		$where .= " AND rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID IN ($ssn_id)";
+		$where['ssn_id'] = "rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID IN ($ssn_id)";
 	}
 	if ( ! empty( $vrn_id ) ) {
-		$where .= " AND rel_splr.rel_vrn.ID IN ($vrn_id)";
+		$where['vrn_id'] = "rel_splr.rel_vrn.ID IN ($vrn_id)";
 	}
 	if ( ! empty( $splr_id ) ) {
-		$where .= " AND rel_splr.ID IN ($splr_id)";
+		$where['splr_id'] = "rel_splr.ID IN ($splr_id)";
 	}
 	if ( ! empty( $spl_id ) ) {
-		$where .= " AND t.ID IN ($spl_id)";
+		$where['spl_id'] = "t.ID IN ($spl_id)";
 	}
 	if ( ! empty( $min ) ) {
 		// @TODO - derzeit wird nur nach 0 oder mehr als 0 unterschieden ;)
-		// $where .= " AND t.ID IS NOT NULL";
+		// $where = "t.ID IS NOT NULL";
 	}
 
 	if ( is_numeric( $sex ) ) {
-		$where .= "  AND rel_splr.geschlecht.meta_value = ($sex)";
+		$where['sex'] = "rel_splr.geschlecht.meta_value = $sex";
 	}
 	if ( is_numeric( $reserve ) ) {
-		$where .= "  AND reserve = $reserve";
+		$where['reserve'] = "reserve IN ($reserve)";
 	}
 
 
-	$fields = "	    rel_splr.ID as splr_id,
+	$fields = "	    rel_splr.geschlecht.meta_value as sex,
+	                rel_splr.ID as splr_id,
 					rel_splr.post_title as nachname,
 					rel_splr.rel_vrn.post_title as verein,
 					rel_splr.rel_vrn.ID as vrn_id,
 					d.runde,
 					d.datum as date,
-					t.ID as spl_id,
 					d.nummer as nummer,
+					d.reserve,
+					d.ergebnis,
+					t.ID as spl_id,
 					rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
 					rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
 					rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
@@ -967,9 +970,6 @@ function bwdb_get_data( $attr ) {
 					rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
 					rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
 					rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-					d.reserve,
-					rel_splr.geschlecht.meta_value as sex,
-					d.ergebnis,
 					";
 
 
@@ -1108,12 +1108,13 @@ function bwdb_get_data( $attr ) {
 			                rel_klss_ssn.rel_klss.rel_bwrb.post_title as bewerb, 
 			                0 AS anzahl,";
 			$groupby  = "sktn_klss_ssn_id";
-			$where    = '';
+			// todo: don't reset $where just overwrite it?
+			$where = array();
 			if ( ! empty( $ssn_id ) ) {
-				$where .= " AND rel_klss_ssn.rel_ssn.ID IN ($ssn_id)";
+				$where['ssn_id'] = "rel_klss_ssn.rel_ssn.ID IN ($ssn_id)";
 			}
 			if ( ! empty( $vrn_id ) ) {
-				$where .= " AND rel_sktn.rel_vrn.ID IN ($vrn_id)";
+				$where['vrn_id'] = "rel_sktn.rel_vrn.ID IN ($vrn_id)";
 			}
 			// $orderby = '';
 			break;
@@ -1126,30 +1127,9 @@ function bwdb_get_data( $attr ) {
 
 		case 'best_off_hspl': // add off to activate ;)  MAX(IF(meta.meta_key = 'nickname', meta.meta_value, NULL)) AS 'nickname',
 
-			$pod_name = 'splr';
+			$pod_name = 'spl';
 
-			$fields = ' t.post_title as post_title,
-                concat(t.post_title, " | ",rel_sktn_klss_ssn.rel_sktn.post_title) as nachname,
-                t.ID as splr_id,
-                geschlecht.meta_value as sex,
-                rel_vrn.post_title as verein,
-                rel_vrn.ID as vrn_id,
-                rel_spl.d.runde,
-                rel_spl.d.datum as date,
-                rel_spl.ID as spl_id,
-                rel_spl.d.nummer as nummer,
-                rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-                rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
-                rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.ID as klss_ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID as ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.spiele.meta_value as anz_spiele,
-                rel_sktn_klss_ssn.rel_klss_ssn.runden.meta_value as anz_runden,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-                rel_spl.d.reserve,
-                rel_spl.d.ergebnis,';
+			$fields .= 'concat( rel_splr.post_title, " | ",rel_sktn_klss_ssn.rel_sktn.post_title) as nachname,';
 
 
 			if ( ! empty( $attr['single'] ) ) {
@@ -1168,9 +1148,6 @@ function bwdb_get_data( $attr ) {
 
 				$groupby = '';
 				$join    = '';
-				if ( is_numeric( $sex ) ) {
-					$where = "  AND geschlecht.meta_value = ($sex)";
-				}
 
 			}
 
@@ -1190,7 +1167,6 @@ function bwdb_get_data( $attr ) {
 
 
 				$groupby = 'sktn_klss_ssn_id, runde, nummer';
-
 				$join = '';
 			}
 
@@ -1200,30 +1176,9 @@ function bwdb_get_data( $attr ) {
 		case 'best_off_hser': // add off to activate ;)  MAX(IF(meta.meta_key = 'nickname', meta.meta_value, NULL)) AS 'nickname',
 			$debug = false;
 
-			$pod_name = 'splr';
+			$pod_name = 'spl';
 
-			$fields = ' t.post_title as nachname,
-                concat(t.post_title, " | ",rel_sktn_klss_ssn.rel_sktn.post_title) as nachname,
-                t.ID as splr_id,
-                geschlecht.meta_value as sex,
-                rel_vrn.post_title as verein,
-                rel_vrn.ID as vrn_id,
-                rel_spl.d.runde,
-                rel_spl.d.datum as date,
-                rel_spl.ID as spl_id,
-                rel_spl.d.nummer as nummer,
-                rel_sktn_klss_ssn.ID as sktn_klss_ssn_id,
-                rel_sktn_klss_ssn.rel_sktn.post_title as sektion,
-                rel_sktn_klss_ssn.rel_sktn.ID as sktn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.ID as klss_ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.ID as ssn_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.spiele.meta_value as anz_spiele,
-                rel_sktn_klss_ssn.rel_klss_ssn.runden.meta_value as anz_runden,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.post_title as klasse,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_klss.rel_bwrb.ID as bwrb_id,
-                rel_sktn_klss_ssn.rel_klss_ssn.rel_ssn.post_title as saison,
-                rel_spl.d.reserve,
-                rel_spl.d.ergebnis,';
+			$fields .= 'concat( rel_splr.post_title, " | ",rel_sktn_klss_ssn.rel_sktn.post_title) as nachname,';
 
 			if ( ! empty( $attr['single'] ) ) {
 
@@ -1241,10 +1196,6 @@ function bwdb_get_data( $attr ) {
 
 				$groupby = 'splr_id, runde';
 				$join    = '';
-				if ( is_numeric( $sex ) ) {
-					$where = "  AND geschlecht.meta_value = ($sex)";
-				}
-
 			}
 
 			if ( ! empty( $attr['team'] ) ) {
@@ -1365,7 +1316,7 @@ function bwdb_get_data( $attr ) {
 
 	// Sortierung @todo
 	if ( ! empty( $where ) ) {
-		$where = ' 1=1 ' . $where;
+		$where_string = implode( " AND ", $where );
 	}
 
 	if ( ! is_numeric( $limit ) ) {
@@ -1379,7 +1330,7 @@ function bwdb_get_data( $attr ) {
 	$params = array(
 		'limit'   => $limit,
 		'select'  => $select,
-		'where'   => $where,
+		'where'   => $where_string,
 		'groupby' => $groupby,
 		'orderby' => $orderby,
 		'join'    => $join,
@@ -1411,13 +1362,13 @@ function bwdb_get_data( $attr ) {
 		print_bwdb( $pod_name, 'Pod' );
 
 		// $wpdb->print_error;
-		print_bwdb( $wpdb->last_query, 'Query' );
+		// print_bwdb( $wpdb->last_query, 'Query' );
 
 		if ( $pods_object ) {
 			print_bwdb( array_keys( $pods_object->fields() ), 'Fields' );
 		}
 
-		print_bwdb( $result, 'Object' );
+		// print_bwdb( $result, 'Object' );
 		echo "<br /><hr />";
 		// bwdb_get_data_old( $attr );
 	}

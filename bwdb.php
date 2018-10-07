@@ -304,18 +304,10 @@ function populate_splr( $form ) {
 			continue;
 		}
 
-
-		// $_POST['sktn_id'];
-		// $name = 'sktn_id'
-		// you can add additional parameters here to alter the posts that are retrieved
-		// more info: http://codex.wordpress.org/Template_Tags/get_posts
-		$sktn_id = $_GET['sktn_id']; // @todo: ABSICHERN !!!! optimieren ...
-
-
-
 		$sktn_id = pods_v_sanitized( 'sktn_id', 'get', '');
 
-
+		// you can add additional parameters here to alter the posts that are retrieved
+		// more info: http://codex.wordpress.org/Template_Tags/get_posts
 		$posts = get_posts( array(
 				'numberposts' => - 1,
 				'post_status' => 'publish',
@@ -356,8 +348,6 @@ function access_entry_via_field( $entry, $form ) {
 		'ergebnis'          => '',
 		'reserve'           => rgar( $entry, '17' ),
 	);
-
-
 
 	// Spiel 1
 	$fields['nummer']   = '1';
@@ -410,6 +400,19 @@ function access_entry_via_field( $entry, $form ) {
 	// wp_die( print_bwdb( $fields, 'angelegt') );
 
 }
+
+// Preparation for "Spielzettel Eingabe"
+function bwdb_gf_pods_save( array $entry, array $entry_id, array $pod, array $fields ) {
+// Spiel 1
+	for ( $i = 1; $i <= 6; $i++ ) {
+		$fields['nummer']   = $i;
+		$fields['ergebnis'] = rgar( $entry, $entry_id[$i] );
+		if ( ! empty( $fields['ergebnis'] ) ) {
+			$pod->add( $fields );
+		}
+	}
+}
+
 
 // add_filter( 'gform_field_value', 'my_custom_population_function', 10, 3 );
 function my_custom_population_function( $value, $field, $name ) {
